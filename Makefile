@@ -33,7 +33,7 @@ flake:
 
 lint-all:
 	@echo "$(OK_COLOR)==> Linting code ...$(NO_COLOR)"
-	@pylint --rcfile=.pylintrc pwdcheck/ --reports n --output-format=colorized
+	@pylint pwdcheck/ --reports n --output-format=colorized --ignore boltons
 
 lint-recent:
 	@./scripts/lint_recent.sh

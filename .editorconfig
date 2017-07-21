@@ -14,6 +14,7 @@ indent_size = 4
 
 # isort
 lines_after_imports = 2
+skip = strutils.py
 not_skip=__init__.py
 
 [Makefile]
