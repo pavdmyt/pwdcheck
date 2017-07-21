@@ -7,7 +7,17 @@ pwdcheck.pwdcheck
 """
 
 import pwdcheck.count as count
+from pwdcheck.boltons.strutils import cardinalize
 from pwdcheck.helpers import Dotdict
+
+
+PNAME_POLICY_MAP = {
+    "minlen": "length",
+    "umin":   "uppercase",
+    "lmin":   "lowercase",
+    "dmin":   "digits",
+    "omin":   "non-alphabetic",
+}
 
 
 # TODO: @property -> @cached_property
@@ -26,8 +36,7 @@ class Inspector(object):
         self.schars = self.make_resp_dict(count.schars, "omin")
 
     @property
-    def as_dict(self):
-        self._dict.pwd_ok = self.pwd_ok
+    def result(self):
         self._dict.length = self.length
         self._dict.uppercase = self.ucase
         self._dict.lowercase = self.lcase
@@ -45,10 +54,41 @@ class Inspector(object):
             raise NotImplementedError
 
     def make_resp_dict(self, checker_func, policy_param_name):
-        res = Dotdict()
-        res.val = checker_func(self._pwd)
-        res.err = res.val < getattr(self.policy, policy_param_name)
-        return res
+        resp = Dotdict()
+
+        resp.aval = checker_func(self._pwd)                  # actual value
+        resp.pval = getattr(self.policy, policy_param_name)  # policy value
+        resp.err = resp.aval < resp.pval
+        resp.param_name = PNAME_POLICY_MAP[policy_param_name]
+        resp.policy_param_name = policy_param_name
+        resp.err_msg = self.compose_err_msg(resp)
+        # TODO: provide useful args for ValueError
+        resp.exc = ValueError(resp.err_msg) if resp.err else None
+        return resp
+
+    @staticmethod
+    def compose_err_msg(resp_obj):
+        if not resp_obj.err:
+            return ""
+
+        if resp_obj.policy_param_name == "dmin":
+            cval = cardinalize("numeral", resp_obj.pval)
+        else:
+            cval = cardinalize("character", resp_obj.pval)
+        base_msg = "password must contain at least"
+
+        if resp_obj.policy_param_name in ("minlen", "dmin"):
+            err_msg = "{0} {1} {2}, {3} given".format(
+                base_msg, resp_obj.pval, cval, resp_obj.aval
+            )
+        elif resp_obj.policy_param_name in ("umin", "lmin", "omin"):
+            err_msg = "{0} {1} {2} {3}, {4} given".format(
+                base_msg, resp_obj.pval, resp_obj.param_name,
+                cval, resp_obj.aval
+            )
+        else:
+            err_msg = "not yet ready!"
+        return err_msg
 
     @property
     def pwd_ok(self):
@@ -63,4 +103,4 @@ class Inspector(object):
 
 def check(pwd, policy):
     ins = Inspector(pwd, policy)
-    return ins.as_dict
+    return ins.pwd_ok, ins.result
