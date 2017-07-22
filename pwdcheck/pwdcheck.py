@@ -25,7 +25,6 @@ class Inspector(object):
     def __init__(self, pwd, policy):
         self._pwd = pwd
         self._policy = policy
-        self._dict = h.Dotdict()
 
         # Results
         self.length = self.make_resp_dict(len, "minlen")
@@ -33,6 +32,7 @@ class Inspector(object):
         self.lcase = self.make_resp_dict(h.count_lcase, "lmin")
         self.digits = self.make_resp_dict(h.count_digits, "dmin")
         self.schars = self.make_resp_dict(h.count_schars, "omin")
+        self.palindrome = h.is_palindrome(self._pwd)
 
     @property
     def pwd_ok(self):
@@ -45,13 +45,20 @@ class Inspector(object):
         ])
 
     @property
-    def result(self):
-        self._dict.length = self.length
-        self._dict.uppercase = self.ucase
-        self._dict.lowercase = self.lcase
-        self._dict.digits = self.digits
-        self._dict.schars = self.schars
-        return self._dict
+    def complexity(self):
+        dct = h.Dotdict()
+        dct.length = self.length
+        dct.uppercase = self.ucase
+        dct.lowercase = self.lcase
+        dct.digits = self.digits
+        dct.schars = self.schars
+        return dct
+
+    @property
+    def extras(self):
+        dct = h.Dotdict()
+        dct.palindrome = self.palindrome
+        return dct
 
     @property
     def policy(self):
@@ -101,5 +108,4 @@ class Inspector(object):
 
 
 def check(pwd, policy):
-    ins = Inspector(pwd, policy)
-    return ins.pwd_ok, ins.result
+    return Inspector(pwd, policy)
