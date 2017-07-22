@@ -6,17 +6,16 @@ pwdcheck.pwdcheck
 
 """
 
-import pwdcheck.count as count
+import pwdcheck.helpers as h
 from pwdcheck.boltons.strutils import cardinalize
-from pwdcheck.helpers import Dotdict
 
 
 PNAME_POLICY_MAP = {
-    "minlen": "length",
-    "umin":   "uppercase",
-    "lmin":   "lowercase",
-    "dmin":   "digits",
-    "omin":   "non-alphabetic",
+    "minlen":       "length",
+    "umin":         "uppercase",
+    "lmin":         "lowercase",
+    "dmin":         "digits",
+    "omin":         "non-alphabetic",
 }
 
 
@@ -26,14 +25,24 @@ class Inspector(object):
     def __init__(self, pwd, policy):
         self._pwd = pwd
         self._policy = policy
-        self._dict = Dotdict()
+        self._dict = h.Dotdict()
 
         # Results
         self.length = self.make_resp_dict(len, "minlen")
-        self.ucase = self.make_resp_dict(count.uppercase, "umin")
-        self.lcase = self.make_resp_dict(count.lowercase, "lmin")
-        self.digits = self.make_resp_dict(count.digits, "dmin")
-        self.schars = self.make_resp_dict(count.schars, "omin")
+        self.ucase = self.make_resp_dict(h.count_ucase, "umin")
+        self.lcase = self.make_resp_dict(h.count_lcase, "lmin")
+        self.digits = self.make_resp_dict(h.count_digits, "dmin")
+        self.schars = self.make_resp_dict(h.count_schars, "omin")
+
+    @property
+    def pwd_ok(self):
+        return not any([
+            self.length.err,
+            self.ucase.err,
+            self.lcase.err,
+            self.digits.err,
+            self.schars.err,
+        ])
 
     @property
     def result(self):
@@ -47,14 +56,14 @@ class Inspector(object):
     @property
     def policy(self):
         if isinstance(self._policy, dict):
-            return Dotdict(self._policy)
+            return h.Dotdict(self._policy)
         else:
             # accept obj's with attrs specified in
             # policy spec
             raise NotImplementedError
 
     def make_resp_dict(self, checker_func, policy_param_name):
-        resp = Dotdict()
+        resp = h.Dotdict()
 
         resp.aval = checker_func(self._pwd)                  # actual value
         resp.pval = getattr(self.policy, policy_param_name)  # policy value
@@ -89,16 +98,6 @@ class Inspector(object):
         else:
             err_msg = "not yet ready!"
         return err_msg
-
-    @property
-    def pwd_ok(self):
-        return not any([
-            self.length.err,
-            self.ucase.err,
-            self.lcase.err,
-            self.digits.err,
-            self.schars.err,
-        ])
 
 
 def check(pwd, policy):
