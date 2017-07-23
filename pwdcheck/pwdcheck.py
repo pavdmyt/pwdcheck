@@ -19,6 +19,11 @@ PNAME_POLICY_MAP = {
 }
 
 
+EXTRAS_FUNC_MAP = {
+    "palindrome": h.is_palindrome,
+}
+
+
 # TODO: @property -> @cached_property
 class Complexity(object):
 
@@ -65,6 +70,11 @@ class Complexity(object):
     def make_resp_dict(self, checker_func, policy_param_name):
         resp = h.Dotdict()
 
+        # Don't make checks if param is (0, false) or not specified at all
+        param = self.policy.get(policy_param_name)
+        if not param:
+            return resp  # empty dict
+
         resp.aval = checker_func(self._pwd)                  # actual value
         resp.pval = getattr(self.policy, policy_param_name)  # policy value
         resp.err = resp.aval < resp.pval
@@ -100,14 +110,28 @@ class Complexity(object):
         return err_msg
 
 
-def get_extras(pwd, history=None, dct=None):
-    ext = h.Dotdict()
-    ext.palindrome = h.is_palindrome(pwd)
-    return ext
+def get_extras(pwd, policy, history=None, dct=None):
+    # Required checks
+    req_checks = [check_name for check_name in policy.keys()
+                  if policy[check_name]]
+
+    result = h.Dotdict()
+    for check_name in req_checks:
+        func = EXTRAS_FUNC_MAP[check_name]
+        result[check_name] = func(pwd)
+
+    return result
 
 
 def check(pwd, policy, history=None, dct=None):
     result = h.Dotdict()
-    result.complexity = Complexity(pwd, policy).as_dict
-    result.extras = get_extras(pwd, history=history, dct=dct)
+
+    if policy.get("complexity"):
+        cxty_p = policy["complexity"]
+        result.complexity = Complexity(pwd, cxty_p).as_dict
+
+    if policy.get("extras"):
+        ext_p = policy["extras"]
+        result.extras = get_extras(pwd, ext_p, history=history, dct=dct)
+
     return result
