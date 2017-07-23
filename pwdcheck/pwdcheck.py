@@ -20,7 +20,7 @@ PNAME_POLICY_MAP = {
 
 
 # TODO: @property -> @cached_property
-class Inspector(object):
+class Complexity(object):
 
     def __init__(self, pwd, policy):
         self._pwd = pwd
@@ -32,7 +32,6 @@ class Inspector(object):
         self.lcase = self.make_resp_dict(h.count_lcase, "lmin")
         self.digits = self.make_resp_dict(h.count_digits, "dmin")
         self.schars = self.make_resp_dict(h.count_schars, "omin")
-        self.palindrome = h.is_palindrome(self._pwd)
 
     @property
     def pwd_ok(self):
@@ -45,19 +44,13 @@ class Inspector(object):
         ])
 
     @property
-    def complexity(self):
+    def as_dict(self):
         dct = h.Dotdict()
         dct.length = self.length
         dct.uppercase = self.ucase
         dct.lowercase = self.lcase
         dct.digits = self.digits
         dct.schars = self.schars
-        return dct
-
-    @property
-    def extras(self):
-        dct = h.Dotdict()
-        dct.palindrome = self.palindrome
         return dct
 
     @property
@@ -107,5 +100,14 @@ class Inspector(object):
         return err_msg
 
 
-def check(pwd, policy):
-    return Inspector(pwd, policy)
+def get_extras(pwd, history=None, dct=None):
+    ext = h.Dotdict()
+    ext.palindrome = h.is_palindrome(pwd)
+    return ext
+
+
+def check(pwd, policy, history=None, dct=None):
+    result = h.Dotdict()
+    result.complexity = Complexity(pwd, policy).as_dict
+    result.extras = get_extras(pwd, history=history, dct=dct)
+    return result
