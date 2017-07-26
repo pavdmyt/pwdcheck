@@ -33,13 +33,6 @@ class Complexity(object):
         self._pwd = pwd
         self._policy = policy.get("complexity", {})
 
-        # Results
-        self.length = self.make_resp_dict(len, "minlen")
-        self.ucase = self.make_resp_dict(h.count_ucase, "umin")
-        self.lcase = self.make_resp_dict(h.count_lcase, "lmin")
-        self.digits = self.make_resp_dict(h.count_digits, "dmin")
-        self.schars = self.make_resp_dict(h.count_schars, "omin")
-
     # There is no :from_yaml method since I don't want
     # to include PyYaml into deps. YAML support should
     # be handled in the client code.
@@ -49,24 +42,25 @@ class Complexity(object):
         policy_data = json.loads(json_policy_str)
         return cls(pwd, policy_data)
 
-    @property
-    def pwd_ok(self):
-        return not any([
-            self.length.err,
-            self.ucase.err,
-            self.lcase.err,
-            self.digits.err,
-            self.schars.err,
-        ])
+    # TODO: pwd_ok should take into account both :cxty and :extras
+    # @property
+    # def pwd_ok(self):
+    #     return not any([
+    #         self.length.err,
+    #         self.ucase.err,
+    #         self.lcase.err,
+    #         self.digits.err,
+    #         self.schars.err,
+    #     ])
 
     @property
     def as_dict(self):
         dct = h.Dotdict()
-        dct.length = self.length
-        dct.uppercase = self.ucase
-        dct.lowercase = self.lcase
-        dct.digits = self.digits
-        dct.schars = self.schars
+        dct.length = self.make_resp_dict(len, "minlen")
+        dct.uppercase = self.make_resp_dict(h.count_ucase, "umin")
+        dct.lowercase = self.make_resp_dict(h.count_lcase, "lmin")
+        dct.digits = self.make_resp_dict(h.count_digits, "dmin")
+        dct.schars = self.make_resp_dict(h.count_schars, "omin")
         return dct
 
     @property
