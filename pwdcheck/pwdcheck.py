@@ -40,6 +40,9 @@ class Complexity(object):
         self.digits = self.make_resp_dict(h.count_digits, "dmin")
         self.schars = self.make_resp_dict(h.count_schars, "omin")
 
+    # There is no :from_yaml method since I don't want
+    # to include PyYaml into deps. YAML support should
+    # be handled in the client code.
     @classmethod
     def from_json(cls, pwd, json_policy_str):
         # XXX: parsing fails with multi-line comments
