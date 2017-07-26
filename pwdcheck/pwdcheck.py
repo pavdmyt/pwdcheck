@@ -6,6 +6,8 @@ pwdcheck.pwdcheck
 
 """
 
+import json
+
 import pwdcheck.helpers as h
 from pwdcheck.boltons.strutils import cardinalize
 
@@ -29,7 +31,7 @@ class Complexity(object):
 
     def __init__(self, pwd, policy):
         self._pwd = pwd
-        self._policy = policy
+        self._policy = policy.get("complexity", {})
 
         # Results
         self.length = self.make_resp_dict(len, "minlen")
@@ -37,6 +39,12 @@ class Complexity(object):
         self.lcase = self.make_resp_dict(h.count_lcase, "lmin")
         self.digits = self.make_resp_dict(h.count_digits, "dmin")
         self.schars = self.make_resp_dict(h.count_schars, "omin")
+
+    @classmethod
+    def from_json(cls, pwd, json_policy_str):
+        # XXX: parsing fails with multi-line comments
+        policy_data = json.loads(json_policy_str)
+        return cls(pwd, policy_data)
 
     @property
     def pwd_ok(self):
@@ -110,28 +118,38 @@ class Complexity(object):
         return err_msg
 
 
-def get_extras(pwd, policy, history=None, dct=None):
-    # Required checks
-    req_checks = [check_name for check_name in policy.keys()
-                  if policy[check_name]]
-
-    result = h.Dotdict()
-    for check_name in req_checks:
-        func = EXTRAS_FUNC_MAP[check_name]
-        result[check_name] = func(pwd)
-
-    return result
+# TODO: implement "extras" support via dedicated class
+# def get_extras(pwd, policy, history=None, dct=None):
+#     result = h.Dotdict()
+#     policy = policy.get("extras")
+#     if not policy:
+#         return result
+#
+#     # Required checks
+#     req_checks = [check_name for check_name in policy.keys()
+#                   if policy[check_name]]
+#
+#     for check_name in req_checks:
+#         func = EXTRAS_FUNC_MAP[check_name]
+#         result[check_name] = func(pwd)
+#
+#     return result
 
 
 def check(pwd, policy, history=None, dct=None):
+    if isinstance(policy, str):
+        try:
+            cxty = Complexity.from_json(pwd, policy)
+        except ValueError as err:
+            # TODO: implement pwdcheck.errors or exceptions
+            raise NotImplementedError(err)
+    elif isinstance(policy, dict):
+        cxty = Complexity(pwd, policy)
+    else:
+        raise NotImplementedError("Unsupported policy data type")
+
     result = h.Dotdict()
-
-    if policy.get("complexity"):
-        cxty_p = policy["complexity"]
-        result.complexity = Complexity(pwd, cxty_p).as_dict
-
-    if policy.get("extras"):
-        ext_p = policy["extras"]
-        result.extras = get_extras(pwd, ext_p, history=history, dct=dct)
+    result.complexity = cxty.as_dict
+    # result.extras = get_extras(pwd, policy, history=history, dct=dct)
 
     return result
