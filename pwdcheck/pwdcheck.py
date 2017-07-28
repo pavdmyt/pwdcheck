@@ -38,7 +38,6 @@ class Complexity(object):
     # be handled in the client code.
     @classmethod
     def from_json(cls, pwd, json_policy_str):
-        # XXX: parsing fails with multi-line comments
         policy_data = json.loads(json_policy_str)
         return cls(pwd, policy_data)
 
@@ -115,38 +114,64 @@ class Complexity(object):
         return err_msg
 
 
-# TODO: implement "extras" support via dedicated class
-# def get_extras(pwd, policy, history=None, dct=None):
-#     result = h.Dotdict()
-#     policy = policy.get("extras")
-#     if not policy:
-#         return result
-#
-#     # Required checks
-#     req_checks = [check_name for check_name in policy.keys()
-#                   if policy[check_name]]
-#
-#     for check_name in req_checks:
-#         func = EXTRAS_FUNC_MAP[check_name]
-#         result[check_name] = func(pwd)
-#
-#     return result
+class Extras(object):
+
+    def __init__(self, pwd, policy):
+        self._pwd = pwd
+        self._policy = policy.get("extras", {})
+
+    # There is no :from_yaml method since I don't want
+    # to include PyYaml into deps. YAML support should
+    # be handled in the client code.
+    @classmethod
+    def from_json(cls, pwd, json_policy_str):
+        policy_data = json.loads(json_policy_str)
+        return cls(pwd, policy_data)
+
+    @property
+    def as_dict(self):
+        dct = h.Dotdict()
+        if not self.policy:
+            return dct
+
+        # Required checks
+        req_checks = [
+            check_name for check_name in self.policy.keys()
+            if self.policy[check_name]
+        ]
+
+        for check_name in req_checks:
+            func = EXTRAS_FUNC_MAP[check_name]
+            dct[check_name] = func(self._pwd)
+
+        return dct
+
+    @property
+    def policy(self):
+        if isinstance(self._policy, dict):
+            return h.Dotdict(self._policy)
+        else:
+            # accept obj's with attrs specified in
+            # policy spec
+            raise NotImplementedError
 
 
 def check(pwd, policy, history=None, dct=None):
     if isinstance(policy, str):
         try:
             cxty = Complexity.from_json(pwd, policy)
+            extras = Extras.from_json(pwd, policy)
         except ValueError as err:
             # TODO: implement pwdcheck.errors or exceptions
             raise NotImplementedError(err)
     elif isinstance(policy, dict):
         cxty = Complexity(pwd, policy)
+        extras = Extras(pwd, policy)
     else:
         raise NotImplementedError("Unsupported policy data type")
 
     result = h.Dotdict()
     result.complexity = cxty.as_dict
-    # result.extras = get_extras(pwd, policy, history=history, dct=dct)
+    result.extras = extras.as_dict
 
     return result
