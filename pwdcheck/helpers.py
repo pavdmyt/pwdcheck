@@ -39,8 +39,3 @@ def count_schars(s):
     #   https://en.wikipedia.org/wiki/Template:General_Category_(Unicode)
     cats = ('Pc', 'Sc', 'Ps', 'Pe', 'Pd', 'Po', 'Sk', 'Sm', 'So')
     return sum([ud.category(i) in cats for i in s])
-
-
-def is_palindrome(s):
-    # type: (str) -> bool
-    return s == s[::-1]

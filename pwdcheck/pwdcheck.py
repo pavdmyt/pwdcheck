@@ -12,17 +12,13 @@ import pwdcheck.helpers as h
 from pwdcheck.boltons.strutils import cardinalize
 
 
+# TODO: move this into class
 PNAME_POLICY_MAP = {
     "minlen":       "length",
     "umin":         "uppercase",
     "lmin":         "lowercase",
     "dmin":         "digits",
     "omin":         "non-alphabetic",
-}
-
-
-EXTRAS_FUNC_MAP = {
-    "palindrome": h.is_palindrome,
 }
 
 
@@ -105,9 +101,10 @@ class Complexity(object):
 
 class Extras(object):
 
-    def __init__(self, pwd, policy):
+    def __init__(self, pwd, policy, pwd_dict=None):
         self._pwd = pwd
-        self._policy = policy.get("extras", {})
+        self._policy = policy
+        self._pwd_dict = pwd_dict if pwd_dict else []
 
     # There is no :from_yaml method since I don't want
     # to include PyYaml into deps. YAML support should
@@ -116,6 +113,24 @@ class Extras(object):
     def from_json(cls, pwd, json_policy_str):
         policy_data = json.loads(json_policy_str)
         return cls(pwd, policy_data)
+
+    @property
+    def dictionary(self):
+        # Merge password dict (not hash map!) provided by
+        # constructor's :pwd_dict with password dict provided
+        # by policy file (if any)
+
+        types = (list, set, tuple)
+        if self._pwd_dict and isinstance(self._pwd_dict, types):
+            pwd_dict = list(self._pwd_dict)
+        else:
+            pwd_dict = self._pwd_dict
+
+        # Dictionary provided in policy file
+        dict_from_policy = self._policy.get("dictionary", [])
+
+        # Use `set` to avoid duplicates
+        return list(set(pwd_dict + dict_from_policy))
 
     @property
     def as_dict(self):
@@ -130,7 +145,7 @@ class Extras(object):
         ]
 
         for check_name in req_checks:
-            func = EXTRAS_FUNC_MAP[check_name]
+            func = self.func_map[check_name]
             dct[check_name] = func(self._pwd)
 
         return dct
@@ -138,11 +153,30 @@ class Extras(object):
     @property
     def policy(self):
         if isinstance(self._policy, dict):
-            return h.Dotdict(self._policy)
+            return h.Dotdict(self._policy.get("extras", {}))
         else:
             # accept obj's with attrs specified in
             # policy spec
             raise NotImplementedError
+
+    @property
+    def func_map(self):
+        return {
+            "palindrome": self.is_palindrome,
+            "in_dictionary": self.in_dict,
+        }
+
+    @staticmethod
+    def is_palindrome(s):
+        # type: (str) -> bool
+        return s == s[::-1]
+
+    def in_dict(self, s):
+        # type: (str) -> bool
+        for i in self.dictionary:
+            if s == i:
+                return True
+        return False
 
 
 def _pwd_ok_check(dct):
@@ -155,7 +189,8 @@ def _pwd_ok_check(dct):
     return not any(cxty_errs + extras_errs)
 
 
-def check(pwd, policy, history=None, dct=None):
+def check(pwd, policy, history=None, pwd_dict=None):
+    # JSON case
     if isinstance(policy, str):
         try:
             cxty = Complexity.from_json(pwd, policy)
@@ -163,9 +198,10 @@ def check(pwd, policy, history=None, dct=None):
         except ValueError as err:
             # TODO: implement pwdcheck.errors or exceptions
             raise NotImplementedError(err)
+    # Common case
     elif isinstance(policy, dict):
         cxty = Complexity(pwd, policy)
-        extras = Extras(pwd, policy)
+        extras = Extras(pwd, policy, pwd_dict=pwd_dict)
     else:
         raise NotImplementedError("Unsupported policy data type")
 
