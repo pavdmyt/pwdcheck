@@ -41,17 +41,6 @@ class Complexity(object):
         policy_data = json.loads(json_policy_str)
         return cls(pwd, policy_data)
 
-    # TODO: pwd_ok should take into account both :cxty and :extras
-    # @property
-    # def pwd_ok(self):
-    #     return not any([
-    #         self.length.err,
-    #         self.ucase.err,
-    #         self.lcase.err,
-    #         self.digits.err,
-    #         self.schars.err,
-    #     ])
-
     @property
     def as_dict(self):
         dct = h.Dotdict()
@@ -156,6 +145,16 @@ class Extras(object):
             raise NotImplementedError
 
 
+def _pwd_ok_check(dct):
+    cxty_dct = dct.complexity
+    extras_dct = dct.extras
+
+    cxty_errs = [val.err for val in cxty_dct.values()]
+    extras_errs = [val for val in extras_dct.values()]
+
+    return not any(cxty_errs + extras_errs)
+
+
 def check(pwd, policy, history=None, dct=None):
     if isinstance(policy, str):
         try:
@@ -174,4 +173,4 @@ def check(pwd, policy, history=None, dct=None):
     result.complexity = cxty.as_dict
     result.extras = extras.as_dict
 
-    return result
+    return _pwd_ok_check(result), result
