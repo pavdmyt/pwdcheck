@@ -8,9 +8,12 @@ Complexity class.
 """
 
 import json
+import string
+import unicodedata as ud
 
-import pwdcheck.helpers as h
 from pwdcheck.boltons.strutils import cardinalize
+
+from .helpers import Dotdict
 
 
 # TODO: move this into class
@@ -21,6 +24,30 @@ PNAME_POLICY_MAP = {
     "dmin":         "digits",
     "omin":         "non-alphabetic",
 }
+
+
+def count_digits(s):
+    # type: (str) -> int
+    return sum([i in string.digits for i in s])
+
+
+def count_ucase(s):
+    # type: (str) -> int
+    return sum([i.isupper() for i in s])
+
+
+def count_lcase(s):
+    # type: (str) -> int
+    return sum([i.islower() for i in s])
+
+
+def count_schars(s):
+    # type: (str) -> int
+    #
+    # Unicode categories:
+    #   https://en.wikipedia.org/wiki/Template:General_Category_(Unicode)
+    cats = ('Pc', 'Sc', 'Ps', 'Pe', 'Pd', 'Po', 'Sk', 'Sm', 'So')
+    return sum([ud.category(i) in cats for i in s])
 
 
 # TODO: @property -> @cached_property
@@ -40,25 +67,25 @@ class Complexity(object):
 
     @property
     def as_dict(self):
-        dct = h.Dotdict()
+        dct = Dotdict()
         dct.length = self.make_resp_dict(len, "minlen")
-        dct.uppercase = self.make_resp_dict(h.count_ucase, "umin")
-        dct.lowercase = self.make_resp_dict(h.count_lcase, "lmin")
-        dct.digits = self.make_resp_dict(h.count_digits, "dmin")
-        dct.schars = self.make_resp_dict(h.count_schars, "omin")
+        dct.uppercase = self.make_resp_dict(count_ucase, "umin")
+        dct.lowercase = self.make_resp_dict(count_lcase, "lmin")
+        dct.digits = self.make_resp_dict(count_digits, "dmin")
+        dct.schars = self.make_resp_dict(count_schars, "omin")
         return dct
 
     @property
     def policy(self):
         if isinstance(self._policy, dict):
-            return h.Dotdict(self._policy)
+            return Dotdict(self._policy)
         else:
             # accept obj's with attrs specified in
             # policy spec
             raise NotImplementedError
 
     def make_resp_dict(self, checker_func, policy_param_name):
-        resp = h.Dotdict()
+        resp = Dotdict()
 
         # Don't make checks if param is (0, false) or not specified at all
         param = self.policy.get(policy_param_name)
