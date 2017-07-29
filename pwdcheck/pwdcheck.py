@@ -27,7 +27,7 @@ def check(pwd, policy, history=None, pwd_dict=None):
     if isinstance(policy, str):
         try:
             cxty = Complexity.from_json(pwd, policy)
-            extras = Extras.from_json(pwd, policy)
+            extras = Extras.from_json(pwd, policy, pwd_dict=pwd_dict)
         except ValueError as err:
             # TODO: implement pwdcheck.errors or exceptions
             raise NotImplementedError(err)

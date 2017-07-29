@@ -23,9 +23,9 @@ class Extras(object):
     # to include PyYaml into deps. YAML support should
     # be handled in the client code.
     @classmethod
-    def from_json(cls, pwd, json_policy_str):
+    def from_json(cls, pwd, json_policy_str, pwd_dict=None):
         policy_data = json.loads(json_policy_str)
-        return cls(pwd, policy_data)
+        return cls(pwd, policy_data, pwd_dict=pwd_dict)
 
     @property
     def dictionary(self):
