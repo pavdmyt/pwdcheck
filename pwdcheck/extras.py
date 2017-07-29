@@ -14,36 +14,59 @@ from pwdcheck.helpers import Dotdict
 
 class Extras(object):
 
-    def __init__(self, pwd, policy, pwd_dict=None):
+    def __init__(self, pwd, policy, pwd_dict=None, pwd_blacklist=None):
         self._pwd = pwd
         self._policy = policy
-        self._pwd_dict = pwd_dict if pwd_dict else []
+        self._pwd_dict = pwd_dict if pwd_dict else []                 # type: List[str]  # noqa
+        self._pwd_blacklist = pwd_blacklist if pwd_blacklist else []  # type: List[str]  # noqa
 
     # There is no :from_yaml method since I don't want
     # to include PyYaml into deps. YAML support should
     # be handled in the client code.
     @classmethod
-    def from_json(cls, pwd, json_policy_str, pwd_dict=None):
+    def from_json(cls, pwd, json_policy_str,
+                  pwd_dict=None, pwd_blacklist=None):
         policy_data = json.loads(json_policy_str)
-        return cls(pwd, policy_data, pwd_dict=pwd_dict)
+        inst = cls(
+            pwd,
+            policy_data,
+            pwd_dict=pwd_dict,
+            pwd_blacklist=pwd_blacklist,
+        )
+        return inst
 
     @property
     def dictionary(self):
-        # Merge password dict (not hash map!) provided by
-        # constructor's :pwd_dict with password dict provided
-        # by policy file (if any)
+        # type: () -> List[str]
+        return self._compose_pwd_list(self._pwd_dict, "dictionary")
 
+    # XXX: if add print inside, you'll see that it's called 3 times!
+    @property
+    def blacklist(self):
+        # type: () -> List[str]
+        return self._compose_pwd_list(self._pwd_blacklist, "blacklist")
+
+    def _compose_pwd_list(self, arg_items, policy_obj_name):
+        # type: (List[str], str) -> List[str]
+        #
+        # Merge password list provided by constructor's argument (if any)
+        # with password list provided by policy file (if any)
+        #
+        # :param arg_items:       list of passwords provided as argument
+        #                         into the class constructor
+        # :param policy_obj_name: name of the object which lists passwords
+        #                         in the policy file
         types = (list, set, tuple)
-        if self._pwd_dict and isinstance(self._pwd_dict, types):
-            pwd_dict = list(self._pwd_dict)
+        if arg_items and isinstance(arg_items, types):
+            pwd_list = list(arg_items)
         else:
-            pwd_dict = self._pwd_dict
+            pwd_list = arg_items
 
         # Dictionary provided in policy file
-        dict_from_policy = self._policy.get("dictionary", [])
+        pwds_from_policy = self._policy.get(policy_obj_name, [])
 
         # Use `set` to avoid duplicates
-        return list(set(pwd_dict + dict_from_policy))
+        return list(set(pwd_list + pwds_from_policy))
 
     @property
     def as_dict(self):
@@ -76,7 +99,8 @@ class Extras(object):
     def func_map(self):
         return {
             "palindrome": self.is_palindrome,
-            "in_dictionary": self.in_dict,
+            "in_dictionary": self.in_item_list(self.dictionary),
+            "in_blacklist": self.in_item_list(self.blacklist),
         }
 
     @staticmethod
@@ -84,9 +108,11 @@ class Extras(object):
         # type: (str) -> bool
         return s == s[::-1]
 
-    def in_dict(self, s):
-        # type: (str) -> bool
-        for i in self.dictionary:
-            if s == i:
-                return True
-        return False
+    @staticmethod
+    def in_item_list(item_list):
+        def func(s):
+            for i in item_list:
+                if s == i:
+                    return True
+            return False
+        return func

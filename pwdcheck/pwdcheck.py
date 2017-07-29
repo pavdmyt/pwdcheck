@@ -22,19 +22,23 @@ def _pwd_ok_check(dct):
     return not any(cxty_errs + extras_errs)
 
 
-def check(pwd, policy, history=None, pwd_dict=None):
+def check(pwd, policy, history=None, pwd_dict=None, pwd_blacklist=None):
     # JSON case
     if isinstance(policy, str):
         try:
             cxty = Complexity.from_json(pwd, policy)
-            extras = Extras.from_json(pwd, policy, pwd_dict=pwd_dict)
+            extras = Extras.from_json(
+                pwd, policy, pwd_dict=pwd_dict, pwd_blacklist=pwd_blacklist
+            )
         except ValueError as err:
             # TODO: implement pwdcheck.errors or exceptions
             raise NotImplementedError(err)
     # Common case
     elif isinstance(policy, dict):
         cxty = Complexity(pwd, policy)
-        extras = Extras(pwd, policy, pwd_dict=pwd_dict)
+        extras = Extras(
+            pwd, policy, pwd_dict=pwd_dict, pwd_blacklist=pwd_blacklist
+        )
     else:
         raise NotImplementedError("Unsupported policy data type")
 
