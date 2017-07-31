@@ -79,20 +79,35 @@ class Extras(object):
     @property
     def as_dict(self):
         dct = Dotdict()
-        if not self.policy:
-            return dct
 
-        # Required checks
-        req_checks = [
-            check_name for check_name in self.policy.keys()
-            if self.policy[check_name]
-        ]
-
-        for check_name in req_checks:
-            func = self.func_map[check_name]
-            dct[check_name] = func(self._pwd)
+        for check_name in self.policy.keys():
+            func = self.func_map.get(check_name)
+            dct[check_name] = self.make_resp_dict(func, check_name)
 
         return dct
+
+    def make_resp_dict(self, checker_func, policy_param_name):
+        resp = Dotdict()
+
+        # Skip unknown (unsupported) entries and
+        # Don't make checks if param is (0, false) or not specified at all
+        param = self.policy.get(policy_param_name)
+        if not (param or checker_func):
+            return resp  # empty dict
+
+        resp.err = checker_func(self._pwd)
+        resp.param_name = policy_param_name
+        resp.policy_param_name = policy_param_name
+        resp.err_msg = self.compose_err_msg(resp)
+        # TODO: provide useful args for ValueError
+        resp.exc = ValueError(resp.err_msg) if resp.err else None
+        return resp
+
+    @staticmethod
+    def compose_err_msg(resp_obj):
+        if not resp_obj.err:
+            return ""
+        return "Not implemented yet!"
 
     @property
     def policy(self):

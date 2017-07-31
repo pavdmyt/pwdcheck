@@ -14,6 +14,10 @@ from .extras import Extras
 
 # TODO: implement func for creating policy guidelines based on
 #       policy-file input
+# TODO: implement func that prints check output in JSON or YAML
+#       format into stdout and allow to use script output with PIPEs.
+#       (partially should be done at client side), here only smth
+#       like :as_json and :as_yaml API calls
 
 
 def _pwd_ok_check(dct):
