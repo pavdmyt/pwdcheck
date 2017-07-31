@@ -9,6 +9,9 @@ import os
 from docopt import docopt
 from yaml import load
 
+# $ pip install -e pwdcheck
+import _install_hook
+
 
 try:
     from yaml import CLoader as Loader
