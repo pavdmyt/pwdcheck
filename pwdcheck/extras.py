@@ -14,6 +14,14 @@ from pwdcheck.helpers import Dotdict
 
 class Extras(object):
 
+    # policy-item-name -> param-name
+    _pname_policy_map = {
+        "palindrome":       "palindrome",
+        "in_dictionary":    "dictionary",
+        "in_blacklist":     "blacklist",
+        "in_history":       "history",
+    }
+
     def __init__(self, pwd, policy,
                  pwd_dict=None, pwd_blacklist=None, pwd_history=None):
         self._pwd = pwd
@@ -96,7 +104,7 @@ class Extras(object):
             return resp  # empty dict
 
         resp.err = checker_func(self._pwd)
-        resp.param_name = policy_param_name
+        resp.param_name = self._pname_policy_map[policy_param_name]
         resp.policy_param_name = policy_param_name
         resp.err_msg = self.compose_err_msg(resp)
         # TODO: provide useful args for ValueError
@@ -107,7 +115,13 @@ class Extras(object):
     def compose_err_msg(resp_obj):
         if not resp_obj.err:
             return ""
-        return "Not implemented yet!"
+
+        if resp_obj.policy_param_name == "palindrome":
+            err_msg = "password is a palindrome"
+        else:
+            err_msg = "password found in {0}".format(resp_obj.param_name)
+
+        return err_msg
 
     @property
     def policy(self):

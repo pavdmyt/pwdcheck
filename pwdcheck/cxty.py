@@ -16,16 +16,6 @@ from pwdcheck.boltons.strutils import cardinalize
 from .helpers import Dotdict
 
 
-# TODO: move this into class
-PNAME_POLICY_MAP = {
-    "minlen":       "length",
-    "umin":         "uppercase",
-    "lmin":         "lowercase",
-    "dmin":         "digits",
-    "omin":         "non-alphabetic",
-}
-
-
 def count_digits(s):
     # type: (str) -> int
     return sum([i in string.digits for i in s])
@@ -51,7 +41,28 @@ def count_schars(s):
 
 
 # TODO: @property -> @cached_property
+# TODO: align with extras.Extras
+# TODO: investigate strange :err_msg, example:
+#
+# 'length': {'aval': 4,
+#            'err': True,
+#            'err_msg': 'password must contain at least 10 '
+#                       'characters, 4 given',
+#            'exc': ValueError('password must contain at least 10 characters, 4 given',),
+#            'param_name': 'length',
+#            'policy_param_name': 'minlen',
+#            'pval': 10},
+#
 class Complexity(object):
+
+    # policy-item-name -> param-name
+    _pname_policy_map = {
+        "minlen":       "length",
+        "umin":         "uppercase",
+        "lmin":         "lowercase",
+        "dmin":         "digits",
+        "omin":         "non-alphabetic",
+    }
 
     def __init__(self, pwd, policy):
         self._pwd = pwd
@@ -95,7 +106,7 @@ class Complexity(object):
         resp.aval = checker_func(self._pwd)                  # actual value
         resp.pval = getattr(self.policy, policy_param_name)  # policy value
         resp.err = resp.aval < resp.pval
-        resp.param_name = PNAME_POLICY_MAP[policy_param_name]
+        resp.param_name = self._pname_policy_map[policy_param_name]
         resp.policy_param_name = policy_param_name
         resp.err_msg = self.compose_err_msg(resp)
         # TODO: provide useful args for ValueError
