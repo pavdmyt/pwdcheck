@@ -1,0 +1,63 @@
+{
+	"complexity": {
+		"minlen": 10,
+		"umin": 1,
+		"lmin": 1,
+		"dmin": 1,
+		"omin": 1
+	},
+	"extras": {
+		"palindrome": true,
+		"similar": false,
+		"simple": false,
+		"rotated": false,
+		"in_dictionary": true,
+		"in_blacklist": true,
+		"in_history": true
+	},
+	"dictionary": [
+		"password",
+		"123456",
+		"12345678",
+		"1234",
+		"qwerty",
+		"12345",
+		"dragon",
+		"pussy",
+		"baseball",
+		"football",
+		"letmein",
+		"monkey",
+		"696969",
+		"abc123",
+		"mustang",
+		"michael",
+		"shadow",
+		"master",
+		"jennifer",
+		"111111",
+		"2000",
+		"jordan",
+		"superman",
+		"harley",
+		"1234567",
+		"fuckme",
+		"hunter",
+		"fuckyou",
+		"trustno1",
+		"ranger"
+	],
+	"blacklist": [
+		"foo",
+		"bar",
+		"foobar",
+		"42",
+		"1729",
+		"racecar"
+	],
+	"history": [
+		"3233",
+		"3322",
+		"332233"
+	]
+}
