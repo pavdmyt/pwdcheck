@@ -22,6 +22,7 @@ help:
 	@echo ""
 	@echo "------------ Misc --------------"
 	@echo "clean-pyc        - remove Python file artifacts"
+	@echo "sync             - sync repo with Dropbox"
 
 #
 # Code style
@@ -97,3 +98,6 @@ clean-pyc:
 	@find . -name '*.pyc' -exec rm -f {} +
 	@find . -name '*.pyo' -exec rm -f {} +
 	@find . -name '*~' -exec rm -f {} +
+
+sync:
+	@./scripts/sync.sh
