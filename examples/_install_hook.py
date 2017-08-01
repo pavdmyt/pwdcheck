@@ -5,6 +5,7 @@ Make pwdcheck absolute imports possible in example scripts.
 """
 
 import os
+import sys
 
 
 def pip_install_hook():
@@ -16,4 +17,5 @@ def pip_install_hook():
     print("{0} Running example:\n".format(dashes))
 
 
-pip_install_hook()
+if "--skip-upd" not in sys.argv:
+    pip_install_hook()

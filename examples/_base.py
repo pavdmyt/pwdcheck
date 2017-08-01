@@ -5,12 +5,14 @@ Basic building blocks to show pwdcheck API usage examples.
 """
 
 import os
+import sys
 from getpass import getpass
 
 from docopt import docopt
 from yaml import load
 
 # $ pip install -e pwdcheck
+# XXX: should be before pwdcheck import
 import _install_hook
 
 import pwdcheck
@@ -39,7 +41,11 @@ class CliExample(object):
 
     @property
     def cli_args(self):
-        return docopt(self._cli_spec)
+        argv = sys.argv[1:]
+        skipper = "--skip-upd"
+        if skipper in argv:
+            argv.remove(skipper)
+        return docopt(self._cli_spec, argv=argv)
 
     @staticmethod
     def _path_check(fpath):
