@@ -5,12 +5,16 @@ Basic building blocks to show pwdcheck API usage examples.
 """
 
 import os
+from getpass import getpass
 
 from docopt import docopt
 from yaml import load
 
 # $ pip install -e pwdcheck
 import _install_hook
+
+import pwdcheck
+from _data import BLACKLIST, HISTORY, PWD_DICT
 
 
 try:
@@ -65,8 +69,18 @@ class CliExample(object):
             return
 
         # Application
-        self.app_code(policy_data)
+        pwd_ok, result = self.pre_setup(policy_data)
+        self.app_code(pwd_ok, result)
 
-    def app_code(self, policy_data):
+    @staticmethod
+    def pre_setup(policy_data):
+        pwd = getpass()
+        pwd_ok, result = pwdcheck.check(pwd, policy_data,
+                                        pwd_dict=PWD_DICT,
+                                        pwd_blacklist=BLACKLIST,
+                                        pwd_history=HISTORY)
+        return pwd_ok, result
+
+    def app_code(self, pwd_ok, result):
         # Should be implemented by child class
         raise NotImplementedError
