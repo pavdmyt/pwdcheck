@@ -29,7 +29,6 @@ class ExampleApp(CliExample):
             return
 
         def print_err(dct):
-            # TODO: I don't like the necessity to refer to .values()
             for item in dct.values():
                 if item.err:
                     print("Error: {}".format(item.err_msg))
