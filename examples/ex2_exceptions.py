@@ -9,7 +9,7 @@ pwdcheck API demonstration.
 """
 
 from _base import CliExample
-from pwdcheck.exceptions import ComplexityCheckError
+from pwdcheck.exceptions import BaseCheckError
 
 
 class ExampleApp(CliExample):
@@ -27,14 +27,11 @@ class ExampleApp(CliExample):
         try:
             raiser(result.complexity)
             raiser(result.extras)
-        # except ValueError as err:
-        #     print("Error: {0}".format(err))
-        except ComplexityCheckError as err:
-            print("'{}' : '{}' violated: {} given, but {} required"
-                  .format(err.policy_param_name,
-                          err.param_name,
-                          err.aval,
-                          err.pval))
+        # same as:
+        # except (ExtrasCheckError, ComplexityCheckError) as err:
+        except BaseCheckError as err:
+            print("'{}' : '{}' violated: {}"
+                  .format(err.policy_param_name, err.param_name, err))
 
 
 def main():

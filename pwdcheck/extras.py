@@ -9,7 +9,8 @@ Extras class.
 
 import json
 
-from pwdcheck.helpers import Dotdict
+from .exceptions import ExtrasCheckError
+from .helpers import Dotdict
 
 
 class Extras(object):
@@ -107,8 +108,12 @@ class Extras(object):
         resp.param_name = self._pname_policy_map[policy_param_name]
         resp.policy_param_name = policy_param_name
         resp.err_msg = self.compose_err_msg(resp)
-        # TODO: provide useful args for ValueError
-        resp.exc = ValueError(resp.err_msg) if resp.err else None
+        resp.exc = ExtrasCheckError(
+            resp.err_msg,
+            param_name=resp.param_name,
+            policy_param_name=resp.policy_param_name,
+        ) if resp.err else None
+
         return resp
 
     @staticmethod
