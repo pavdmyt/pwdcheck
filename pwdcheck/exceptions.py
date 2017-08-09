@@ -12,8 +12,21 @@ class PwdCheckError(Exception):
     """Basic exception for errors raised by pwdcheck."""
 
 
+class PolicyError(PwdCheckError):
+    """Policy error occurred."""
+
+
+class PolicyParsingError(PolicyError):
+    """An error occurred while parsing policy data."""
+
+
 class BaseCheckError(PwdCheckError, ValueError):
-    """Base exception for *CheckError(s)."""
+    """Base exception for *CheckError(s).
+
+    Cathing this error will catch both:
+    `pwdcheck.exceptions.ExtrasCheckError` and
+    `pwdcheck.exceptions.ComplexityCheckError` errors.
+    """
 
     def __init__(self, err_msg, **kwargs):
         super(BaseCheckError, self).__init__(err_msg)
@@ -22,11 +35,11 @@ class BaseCheckError(PwdCheckError, ValueError):
 
 
 class ExtrasCheckError(BaseCheckError):
-    """Used for resp.exc objects of the Extras class."""
+    """An error occurred while checking :extras Policy section."""
 
 
 class ComplexityCheckError(BaseCheckError):
-    """Used for resp.exc object of the Complexity class."""
+    """An error occurred while checking :complexity Policy section."""
 
     def __init__(self, err_msg, **kwargs):
         super(ComplexityCheckError, self).__init__(err_msg, **kwargs)

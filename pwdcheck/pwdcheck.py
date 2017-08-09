@@ -9,6 +9,7 @@ pwdcheck.pwdcheck
 from pwdcheck.helpers import Dotdict
 
 from .cxty import Complexity
+from .exceptions import PolicyError, PolicyParsingError
 from .extras import Extras
 
 
@@ -40,8 +41,8 @@ def check(pwd, policy, pwd_dict=None, pwd_blacklist=None, pwd_history=None):
                                       pwd_blacklist=pwd_blacklist,
                                       pwd_history=pwd_history)
         except ValueError as err:
-            # TODO: implement pwdcheck.errors or exceptions
-            raise NotImplementedError(err)
+            # raised when invalid JSON in :policy str
+            raise PolicyParsingError(err)
     # Common case
     elif isinstance(policy, dict):
         cxty = Complexity(pwd, policy)
@@ -50,7 +51,7 @@ def check(pwd, policy, pwd_dict=None, pwd_blacklist=None, pwd_history=None):
                         pwd_blacklist=pwd_blacklist,
                         pwd_history=pwd_history)
     else:
-        raise NotImplementedError("Unsupported policy data type")
+        raise PolicyError("unsupported policy data type")
 
     result = Dotdict()
     result.complexity = cxty.as_dict
