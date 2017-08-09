@@ -9,4 +9,11 @@ DST="$HOME/Dropbox/PythonProjects/pwdcheck"
 # -v       : verbose
 # -z       : compression (for network transfer)
 # --delete : delete files from $DST
-rsync -avz --delete $SRC $DST
+rsync -avz                    \
+      --delete                \
+      --exclude "__pycache__" \
+      --exclude ".cache"      \
+      --exclude ".mypy_cache" \
+      --exclude "*.pyc"       \
+      --exclude "*.egg-info"  \
+      $SRC $DST
