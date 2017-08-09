@@ -13,6 +13,7 @@ import unicodedata as ud
 
 from pwdcheck.boltons.strutils import cardinalize
 
+from .exceptions import ComplexityCheckError
 from .helpers import Dotdict
 
 
@@ -109,8 +110,14 @@ class Complexity(object):
         resp.param_name = self._pname_policy_map[policy_param_name]
         resp.policy_param_name = policy_param_name
         resp.err_msg = self.compose_err_msg(resp)
-        # TODO: provide useful args for ValueError
-        resp.exc = ValueError(resp.err_msg) if resp.err else None
+        resp.exc = ComplexityCheckError(
+            resp.err_msg,
+            aval=resp.aval,
+            pval=resp.pval,
+            param_name=resp.param_name,
+            policy_param_name=resp.policy_param_name,
+        ) if resp.err else None
+
         return resp
 
     @staticmethod
