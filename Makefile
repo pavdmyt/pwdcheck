@@ -19,6 +19,7 @@ help:
 	@echo ""
 	@echo "----------- Testing ------------"
 	@echo "test             - run all tests"
+	@echo "coverage         - report on code coverage"
 	@echo ""
 	@echo "------------ Misc --------------"
 	@echo "clean-pyc        - remove Python file artifacts"
@@ -88,9 +89,10 @@ test: clean-pyc flake
 	@echo "$(OK_COLOR)==> Runnings tests ...$(NO_COLOR)"
 	@py.test -v
 
-coverage-report: clean-pyc
+coverage: clean-pyc
 	@echo "$(OK_COLOR)==> Calculating coverage...$(NO_COLOR)"
-	@py.test --cov=pwdcheck tests/
+	@py.test --cov-report term --cov-report html --cov pwdcheck tests/
+	@echo "open file://`pwd`/htmlcov/index.html"
 
 
 #
