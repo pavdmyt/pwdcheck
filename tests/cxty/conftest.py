@@ -20,6 +20,9 @@ def base_policy():
                            "omin": 1}}
 
 
+#
+# minlen
+#
 @pytest.fixture(scope='module')
 def zero_len_policy(base_policy):
     p = deepcopy(base_policy)
@@ -31,4 +34,21 @@ def zero_len_policy(base_policy):
 def false_len_policy(base_policy):
     p = deepcopy(base_policy)
     p["complexity"]["minlen"] = False
+    return p
+
+
+#
+# dmin
+#
+@pytest.fixture(scope='module')
+def zero_digits_policy(base_policy):
+    p = deepcopy(base_policy)
+    p["complexity"]["dmin"] = 0
+    return p
+
+
+@pytest.fixture(scope='module')
+def false_digits_policy(base_policy):
+    p = deepcopy(base_policy)
+    p["complexity"]["dmin"] = False
     return p
