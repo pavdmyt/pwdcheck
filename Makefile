@@ -88,6 +88,10 @@ test: clean-pyc flake
 	@echo "$(OK_COLOR)==> Runnings tests ...$(NO_COLOR)"
 	@py.test -v
 
+coverage-report: clean-pyc
+	@echo "$(OK_COLOR)==> Calculating coverage...$(NO_COLOR)"
+	@py.test --cov=pwdcheck tests/
+
 
 #
 # Misc
