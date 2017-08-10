@@ -14,7 +14,7 @@ import unicodedata as ud
 from pwdcheck.boltons.strutils import cardinalize
 
 from .exceptions import ComplexityCheckError
-from .helpers import Dotdict
+from .helpers import Dotdict, cached_property
 
 
 def count_digits(s):
@@ -41,19 +41,8 @@ def count_schars(s):
     return sum([ud.category(i) in cats for i in s])
 
 
-# TODO: @property -> @cached_property
 # TODO: align with extras.Extras
-# TODO: investigate strange :err_msg, example:
-#
-# 'length': {'aval': 4,
-#            'err': True,
-#            'err_msg': 'password must contain at least 10 '
-#                       'characters, 4 given',
-#            'exc': ValueError('password must contain at least 10 characters, 4 given',),
-#            'param_name': 'length',
-#            'policy_param_name': 'minlen',
-#            'pval': 10},
-#
+# TODO: add __str__ and __repr__
 class Complexity(object):
 
     # policy-item-name -> param-name
@@ -77,7 +66,7 @@ class Complexity(object):
         policy_data = json.loads(json_policy_str)
         return cls(pwd, policy_data)
 
-    @property
+    @cached_property
     def as_dict(self):
         dct = Dotdict()
         dct.length = self.make_resp_dict(len, "minlen")
@@ -87,14 +76,14 @@ class Complexity(object):
         dct.schars = self.make_resp_dict(count_schars, "omin")
         return dct
 
-    @property
+    @cached_property
     def policy(self):
         if isinstance(self._policy, dict):
             return Dotdict(self._policy)
         else:
             # accept obj's with attrs specified in
             # policy spec
-            raise NotImplementedError
+            raise NotImplementedError  # TODO: handle this
 
     def make_resp_dict(self, checker_func, policy_param_name):
         resp = Dotdict()

@@ -10,9 +10,10 @@ Extras class.
 import json
 
 from .exceptions import ExtrasCheckError
-from .helpers import Dotdict
+from .helpers import Dotdict, cached_property
 
 
+# TODO: add __str__ and __repr__
 class Extras(object):
 
     # policy-item-name -> param-name
@@ -47,18 +48,17 @@ class Extras(object):
         )
         return inst
 
-    @property
+    @cached_property
     def dictionary(self):
         # type: () -> List[str]
         return self._compose_pwd_list(self._pwd_dict, "dictionary")
 
-    # XXX: if add print inside, you'll see that it's called 3 times!
-    @property
+    @cached_property
     def blacklist(self):
         # type: () -> List[str]
         return self._compose_pwd_list(self._pwd_blacklist, "blacklist")
 
-    @property
+    @cached_property
     def history(self):
         # type: () -> List[str]
         return self._compose_pwd_list(self._pwd_history, "history")
@@ -85,7 +85,7 @@ class Extras(object):
         # Use `set` to avoid duplicates
         return list(set(pwd_list + pwds_from_policy))
 
-    @property
+    @cached_property
     def as_dict(self):
         dct = Dotdict()
 
@@ -128,16 +128,16 @@ class Extras(object):
 
         return err_msg
 
-    @property
+    @cached_property
     def policy(self):
         if isinstance(self._policy, dict):
             return Dotdict(self._policy.get("extras", {}))
         else:
             # accept obj's with attrs specified in
             # policy spec
-            raise NotImplementedError
+            raise NotImplementedError  # TODO: handle this
 
-    @property
+    @cached_property
     def func_map(self):
         return {
             "palindrome": self.is_palindrome,
