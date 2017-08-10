@@ -14,7 +14,7 @@ import pytest
 
 # conftest fixtures:
 #
-# - mixed_spec
+# - base_policy
 
 
 class TestErr:
@@ -50,8 +50,8 @@ class TestErr:
         # bad Special characters
         ("11FOOBARs", [False, False, False, False, True]),
     ])
-    def test_mixed_check(self, pwd, errors, mixed_spec):
-        res_dct = Complexity(pwd, mixed_spec).as_dict
+    def test_mixed_check(self, pwd, errors, base_policy):
+        res_dct = Complexity(pwd, base_policy).as_dict
         len_err, digit_err, upper_err, lower_err, schars_err = errors
 
         assert res_dct.length.err == len_err
