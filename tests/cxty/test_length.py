@@ -24,16 +24,16 @@ def test_false_length(false_len_policy):
     assert res_dct.length == {}
 
 
-def test_empty_err_msg_if_no_err(base_policy):
+def test_empty_err_msg_if_no_err(mixed_policy):
     # "minlen": 8
-    res_dct = Complexity("foobar11", base_policy).as_dict
+    res_dct = Complexity("foobar11", mixed_policy).as_dict
     assert not res_dct.length.err        # no :err
     assert res_dct.length.err_msg == ""  # empty :err_msg
 
 
-def test_none_exc_if_no_err(base_policy):
+def test_none_exc_if_no_err(mixed_policy):
     # "minlen": 8
-    res_dct = Complexity("foobar11", base_policy).as_dict
+    res_dct = Complexity("foobar11", mixed_policy).as_dict
     assert not res_dct.length.err        # no :err
     assert res_dct.length.exc is None    # :exc is None
 
@@ -75,8 +75,8 @@ def test_none_exc_if_no_err(base_policy):
          'pval': 8}
     )
 ])
-def test_length(pwd, expected_out, base_policy):
-    res_dct = Complexity(pwd, base_policy).as_dict
+def test_length(pwd, expected_out, mixed_policy):
+    res_dct = Complexity(pwd, mixed_policy).as_dict
 
     for key, val in expected_out.items():
         if key == 'exc' and res_dct.length['exc']:

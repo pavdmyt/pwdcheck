@@ -20,6 +20,15 @@ def base_policy():
                            "omin": 1}}
 
 
+@pytest.fixture(scope='module')
+def mixed_policy():
+    return {"complexity": {"minlen": 8,
+                           "umin": 2,
+                           "lmin": 2,
+                           "dmin": 2,
+                           "omin": 2}}
+
+
 #
 # minlen
 #
@@ -51,4 +60,21 @@ def zero_digits_policy(base_policy):
 def false_digits_policy(base_policy):
     p = deepcopy(base_policy)
     p["complexity"]["dmin"] = False
+    return p
+
+
+#
+# uppercase
+#
+@pytest.fixture(scope='module')
+def zero_umin_policy(base_policy):
+    p = deepcopy(base_policy)
+    p["complexity"]["umin"] = 0
+    return p
+
+
+@pytest.fixture(scope='module')
+def false_umin_policy(base_policy):
+    p = deepcopy(base_policy)
+    p["complexity"]["umin"] = False
     return p

@@ -24,16 +24,16 @@ def test_false_digits(false_digits_policy):
     assert res_dct.digits == {}
 
 
-def test_empty_err_msg_if_no_err(base_policy):
+def test_empty_err_msg_if_no_err(mixed_policy):
     # "dmin": 2
-    res_dct = Complexity("11", base_policy).as_dict
+    res_dct = Complexity("11", mixed_policy).as_dict
     assert not res_dct.digits.err        # no :err
     assert res_dct.digits.err_msg == ""  # empty :err_msg
 
 
-def test_none_exc_if_no_err(base_policy):
+def test_none_exc_if_no_err(mixed_policy):
     # "dmin": 2
-    res_dct = Complexity("11", base_policy).as_dict
+    res_dct = Complexity("11", mixed_policy).as_dict
     assert not res_dct.digits.err        # no :err
     assert res_dct.digits.exc is None    # :exc is None
 
@@ -45,7 +45,7 @@ def test_none_exc_if_no_err(base_policy):
         {'aval': 0,
          'err': True,
          'err_msg': 'password must contain at least 2 numerals, 0 given',
-         'exc': ComplexityCheckError('password must contain at least 2 numerals, 0 given',),
+         'exc': ComplexityCheckError('password must contain at least 2 numerals, 0 given',),  # noqa
          'param_name': 'digits',
          'policy_param_name': 'dmin',
          'pval': 2}
@@ -57,7 +57,7 @@ def test_none_exc_if_no_err(base_policy):
         {'aval': 1,
          'err': True,
          'err_msg': 'password must contain at least 2 numerals, 1 given',
-         'exc': ComplexityCheckError('password must contain at least 2 numerals, 1 given',),
+         'exc': ComplexityCheckError('password must contain at least 2 numerals, 1 given',),  # noqa
          'param_name': 'digits',
          'policy_param_name': 'dmin',
          'pval': 2}
@@ -75,8 +75,8 @@ def test_none_exc_if_no_err(base_policy):
          'pval': 2}
     )
 ])
-def test_digits(pwd, expected_out, base_policy):
-    res_dct = Complexity(pwd, base_policy).as_dict
+def test_digits(pwd, expected_out, mixed_policy):
+    res_dct = Complexity(pwd, mixed_policy).as_dict
 
     for key, val in expected_out.items():
         if key == 'exc' and res_dct.digits['exc']:
