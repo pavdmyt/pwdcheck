@@ -42,13 +42,13 @@ def test_none_exc_if_no_err(mixed_policy):
     # Empty
     (
         "",  # <- password
-         {'aval': 0,
-          'err': True,
-          'err_msg': 'password must contain at least 2 uppercase characters, 0 given',  # noqa
-          'exc': ComplexityCheckError('password must contain at least 2 uppercase characters, 0 given',),  # noqa
-          'param_name': 'uppercase',
-          'policy_param_name': 'umin',
-          'pval': 2}
+        {'aval': 0,
+         'err': True,
+         'err_msg': 'password must contain at least 2 uppercase characters, 0 given',  # noqa
+         'exc': ComplexityCheckError('password must contain at least 2 uppercase characters, 0 given',),  # noqa
+         'param_name': 'uppercase',
+         'policy_param_name': 'umin',
+         'pval': 2}
     ),
 
     # Short
