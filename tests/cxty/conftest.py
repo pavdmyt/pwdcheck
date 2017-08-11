@@ -95,3 +95,20 @@ def false_lmin_policy(base_policy):
     p = deepcopy(base_policy)
     p["complexity"]["lmin"] = False
     return p
+
+
+#
+# schars
+#
+@pytest.fixture(scope='module')
+def zero_omin_policy(base_policy):
+    p = deepcopy(base_policy)
+    p["complexity"]["omin"] = 0
+    return p
+
+
+@pytest.fixture(scope='module')
+def false_omin_policy(base_policy):
+    p = deepcopy(base_policy)
+    p["complexity"]["omin"] = False
+    return p
