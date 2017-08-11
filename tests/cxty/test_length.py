@@ -45,7 +45,8 @@ def test_none_exc_if_no_err(mixed_policy):
         {'aval': 0,
          'err': True,
          'err_msg': 'password must contain at least 8 characters, 0 given',
-         'exc': ComplexityCheckError('password must contain at least 8 characters, 0 given',),  # noqa
+         'exc': ComplexityCheckError('password must contain at least 8 '
+                                     'characters, 0 given',),
          'param_name': 'length',
          'policy_param_name': 'minlen',
          'pval': 8}
@@ -57,7 +58,8 @@ def test_none_exc_if_no_err(mixed_policy):
         {'aval': 3,
          'err': True,
          'err_msg': 'password must contain at least 8 characters, 3 given',
-         'exc': ComplexityCheckError('password must contain at least 8 characters, 3 given'),  # noqa
+         'exc': ComplexityCheckError('password must contain at least 8 '
+                                     'characters, 3 given'),
          'param_name': 'length',
          'policy_param_name': 'minlen',
          'pval': 8}

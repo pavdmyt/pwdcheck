@@ -44,8 +44,10 @@ def test_none_exc_if_no_err(mixed_policy):
         "",  # <- password
         {'aval': 0,
          'err': True,
-         'err_msg': 'password must contain at least 2 lowercase characters, 0 given',  # noqa
-         'exc': ComplexityCheckError('password must contain at least 2 lowercase characters, 0 given',),  # noqa
+         'err_msg': 'password must contain at least 2 lowercase '
+                    'characters, 0 given',
+         'exc': ComplexityCheckError('password must contain at least 2 '
+                                     'lowercase characters, 0 given',),
          'param_name': 'lowercase',
          'policy_param_name': 'lmin',
          'pval': 2}
@@ -56,8 +58,10 @@ def test_none_exc_if_no_err(mixed_policy):
         "l",  # <- password
         {'aval': 1,
          'err': True,
-         'err_msg': 'password must contain at least 2 lowercase characters, 1 given',  # noqa
-         'exc': ComplexityCheckError('password must contain at least 2 lowercase characters, 1 given',),  # noqa
+         'err_msg': 'password must contain at least 2 lowercase '
+                    'characters, 1 given',
+         'exc': ComplexityCheckError('password must contain at least 2 '
+                                     'lowercase characters, 1 given',),
          'param_name': 'lowercase',
          'policy_param_name': 'lmin',
          'pval': 2}

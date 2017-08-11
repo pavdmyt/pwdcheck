@@ -45,7 +45,8 @@ def test_none_exc_if_no_err(mixed_policy):
         {'aval': 0,
          'err': True,
          'err_msg': 'password must contain at least 2 numerals, 0 given',
-         'exc': ComplexityCheckError('password must contain at least 2 numerals, 0 given',),  # noqa
+         'exc': ComplexityCheckError('password must contain at least 2 '
+                                     'numerals, 0 given',),
          'param_name': 'digits',
          'policy_param_name': 'dmin',
          'pval': 2}
@@ -57,7 +58,8 @@ def test_none_exc_if_no_err(mixed_policy):
         {'aval': 1,
          'err': True,
          'err_msg': 'password must contain at least 2 numerals, 1 given',
-         'exc': ComplexityCheckError('password must contain at least 2 numerals, 1 given',),  # noqa
+         'exc': ComplexityCheckError('password must contain at least 2 '
+                                     'numerals, 1 given',),
          'param_name': 'digits',
          'policy_param_name': 'dmin',
          'pval': 2}
