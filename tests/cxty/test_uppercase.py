@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 """
 tests.cxty.test_uppercase
@@ -86,5 +87,4 @@ def test_uppercase(pwd, expected_out, mixed_policy):
         if key == 'exc' and res_dct.uppercase['exc']:
             assert isinstance(res_dct.uppercase[key], ComplexityCheckError)
         else:
-            print(key, val)
             assert res_dct.uppercase[key] == val

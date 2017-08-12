@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 """
 tests.cxty.test_lowercase
@@ -86,5 +87,4 @@ def test_lowercase(pwd, expected_out, mixed_policy):
         if key == 'exc' and res_dct.lowercase['exc']:
             assert isinstance(res_dct.lowercase[key], ComplexityCheckError)
         else:
-            print(key, val)
             assert res_dct.lowercase[key] == val

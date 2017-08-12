@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 """
 tests.cxty.test_digits
@@ -84,5 +85,4 @@ def test_digits(pwd, expected_out, mixed_policy):
         if key == 'exc' and res_dct.digits['exc']:
             assert isinstance(res_dct.digits[key], ComplexityCheckError)
         else:
-            print(key, val)
             assert res_dct.digits[key] == val

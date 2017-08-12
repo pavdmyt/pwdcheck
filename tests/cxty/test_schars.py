@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 """
 tests.cxty.test_schars
@@ -86,5 +87,4 @@ def test_schars(pwd, expected_out, mixed_policy):
         if key == 'exc' and res_dct.schars['exc']:
             assert isinstance(res_dct.schars[key], ComplexityCheckError)
         else:
-            print(key, val)
             assert res_dct.schars[key] == val
