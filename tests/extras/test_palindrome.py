@@ -9,10 +9,13 @@ Tests for palindrome check.
 
 import pytest
 
-from pwdcheck.extras import Extras
 from pwdcheck.exceptions import ExtrasCheckError
+from pwdcheck.extras import Extras
 
 
+#
+# Test Extras.as_dict out for palindrome checks
+#
 def test_false_palindrome(false_palindrome_policy):
     # "palindrome": false
     res_dct = Extras("foobar", false_palindrome_policy).as_dict
@@ -82,3 +85,32 @@ def test_palindrome(pwd, expected_out, mixed_policy):
             assert isinstance(res_dct.palindrome[key], ExtrasCheckError)
         else:
             assert res_dct.palindrome[key] == val
+
+
+#
+# Test Extras.is_palindrome method
+#
+@pytest.mark.parametrize("string, expected", [
+    # the empty string is a palindrome
+    ("", True),
+
+    # single-character string is a palindrome
+    ("u", True),
+
+    # palindrome checks are case-insensitive
+    ("raceCAR", True),
+
+    # common palindromes
+    ("radar", True),
+    ("level", True),
+    ("rotor", True),
+    ("kayak", True),
+    ("refer", True),
+
+    # Non palindromes
+    ("foo", False),
+    ("bar", False),
+    ("42", False),
+])
+def test_is_palindrome(string, expected):
+    assert Extras.is_palindrome(string) == expected

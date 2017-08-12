@@ -149,6 +149,12 @@ class Extras(object):
     @staticmethod
     def is_palindrome(s):
         # type: (str) -> bool
+
+        # The following is valid:
+        # - the empty string is a palindrome
+        # - a string constituted only by a single character is a palindrome
+        # - palindrome checks are case-insensitive
+        s = s.lower()
         return s == s[::-1]
 
     @staticmethod
