@@ -101,7 +101,7 @@ class Extras(object):
         # Skip unknown (unsupported) entries and
         # Don't make checks if param is (0, false) or not specified at all
         param = self.policy.get(policy_param_name)
-        if not (param or checker_func):
+        if not (param and checker_func):
             return resp  # empty dict
 
         resp.err = checker_func(self._pwd)
