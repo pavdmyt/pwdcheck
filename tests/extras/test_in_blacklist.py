@@ -89,11 +89,21 @@ class TestBlacklistProperty:
         ext = Extras("pwd", mixed_policy, pwd_blacklist=blacklist)
         assert sorted(ext.blacklist) == sorted(expected)
 
-    def test_blacklist_init_as_policy(self, policy_with_blacklist):
+    @pytest.mark.parametrize("policy_blist, expected", [
+        # Empty
+        ([], []),
+
+        # Simple
+        (["foo", "bar"], ["foo", "bar"]),
+
+        # Removes duplicates
+        (["foo", "foo", "bar"], ["foo", "bar"]),
+    ])
+    def test_blacklist_init_as_policy(self, policy_blist,
+                                      expected, mixed_policy):
         # Blacklist init by :blacklist field from policy
-        ext = Extras("pwd", policy_with_blacklist)
-        blacklist = policy_with_blacklist.get("blacklist")
-        expected = list(set(blacklist))
+        mixed_policy.update({"blacklist": policy_blist})
+        ext = Extras("pwd", mixed_policy)
         assert sorted(ext.blacklist) == sorted(expected)
 
     @pytest.mark.parametrize("pwd_blist, policy_blist, expected", [
