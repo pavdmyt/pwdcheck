@@ -9,7 +9,7 @@ Extras class.
 
 import json
 
-from .exceptions import ExtrasCheckError
+from .exceptions import DataTypeError, ExtrasCheckError
 from .helpers import Dotdict, cached_property
 
 
@@ -73,13 +73,24 @@ class Extras(object):
         #                         into the class constructor
         # :param policy_obj_name: name of the object which lists passwords
         #                         in the policy file
-        types = (list, set, tuple)
-        if arg_items and isinstance(arg_items, types):
+        assert policy_obj_name in ("dictionary", "blacklist", "history")
+
+        try:
             pwd_list = list(arg_items)
-        else:
-            pwd_list = arg_items
+        except TypeError:
+            map_ = {
+                "dictionary": "pwd_dict",
+                "blacklist":  "pwd_blacklist",
+                "history":    "pwd_history",
+            }
+            raise DataTypeError(
+                "object provided by '{}' is not iterable"
+                .format(map_[policy_obj_name])
+            )
 
         # Dictionary provided in policy file
+        # XXX: may raise AttributeError if provided non-dict :policy
+        #      doesn't call :policy property
         pwds_from_policy = self._policy.get(policy_obj_name, [])
 
         # Use `set` to avoid duplicates

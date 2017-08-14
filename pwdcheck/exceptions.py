@@ -45,3 +45,7 @@ class ComplexityCheckError(BaseCheckError):
         super(ComplexityCheckError, self).__init__(err_msg, **kwargs)
         self.aval = kwargs.get("aval")
         self.pval = kwargs.get("pval")
+
+
+class DataTypeError(PwdCheckError, TypeError):
+    """An error occurred while transforming object into a list."""
