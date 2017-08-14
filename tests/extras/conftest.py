@@ -38,3 +38,10 @@ def false_in_blacklist_policy(base_policy):
     p = deepcopy(base_policy)
     p["extras"]["in_blacklist"] = False
     return p
+
+
+@pytest.fixture(scope='module')
+def false_in_dictionary_policy(base_policy):
+    p = deepcopy(base_policy)
+    p["extras"]["in_dictionary"] = False
+    return p
