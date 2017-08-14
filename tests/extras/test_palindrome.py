@@ -4,7 +4,7 @@
 tests.extras.test_palindrome
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Tests for palindrome check.
+Tests for `palindrome` check.
 """
 
 import pytest
