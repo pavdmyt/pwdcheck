@@ -145,7 +145,7 @@ class TestDictionaryProperty:
         (["foo", "foo", "bar"], ["foo", "bar"]),
     ])
     def test_dictionary_init_as_arg(self, dictionary, expected, mixed_policy):
-        # Blacklist init using :pwd_dict argument
+        # Dictionary init using :pwd_dict argument
         ext = Extras("pwd", mixed_policy, pwd_dict=dictionary)
         assert sorted(ext.dictionary) == sorted(expected)
 
@@ -161,7 +161,7 @@ class TestDictionaryProperty:
     ])
     def test_dictionary_init_as_policy(self, policy_blist,
                                        expected, mixed_policy):
-        # Blacklist init by :dictionary field from policy
+        # Dictionary init by :dictionary field from policy
         mixed_policy.update({"dictionary": policy_blist})
         ext = Extras("pwd", mixed_policy)
         assert sorted(ext.dictionary) == sorted(expected)
@@ -184,7 +184,7 @@ class TestDictionaryProperty:
     ])
     def test_dictionary_mixed_init(self, pwd_blist, policy_blist,
                                    expected, mixed_policy):
-        # Blacklist init using both :pwd_dict arg
+        # Dictionary init using both :pwd_dict arg
         # and :dictionary field from policy
         mixed_policy.update({"dictionary": policy_blist})
         ext = Extras("pwd", mixed_policy, pwd_dict=pwd_blist)
