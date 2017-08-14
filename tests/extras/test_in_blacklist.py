@@ -9,7 +9,7 @@ Tests for `in_blacklist` check.
 
 import pytest
 
-from pwdcheck.exceptions import DataTypeError
+from pwdcheck.exceptions import DataTypeError, ExtrasCheckError
 from pwdcheck.extras import Extras
 
 
@@ -34,6 +34,66 @@ def test_none_exc_if_no_err(mixed_policy):
     res_dct = Extras("foobar", mixed_policy).as_dict  # not a in_blacklist
     assert not res_dct.in_blacklist.err               # no :err
     assert res_dct.in_blacklist.exc is None           # :exc is None
+
+
+@pytest.mark.parametrize("pwd, pwd_blist, policy_blist, expected", [
+    # Empty
+    (
+        "",       # <- password
+        ["foo"],  # <- :pwd_blacklist
+        ["bar"],  # <- blacklist from policy
+        {'err': False,
+         'err_msg': '',
+         'exc': None,
+         'param_name': 'blacklist',
+         'policy_param_name': 'in_blacklist'}
+    ),
+
+    # Only :pwd_blacklist
+    (
+        "foo",    # <- password
+        ["foo"],  # <- :pwd_blacklist
+        [],       # <- blacklist from policy
+        {'err': True,
+         'err_msg': 'password found in blacklist',
+         'exc': ExtrasCheckError('password found in blacklist',),
+         'param_name': 'blacklist',
+         'policy_param_name': 'in_blacklist'}
+    ),
+
+    # Only in policy
+    (
+        "foo",    # <- password
+        [],       # <- :pwd_blacklist
+        ["foo"],  # <- blacklist from policy
+        {'err': True,
+         'err_msg': 'password found in blacklist',
+         'exc': ExtrasCheckError('password found in blacklist',),
+         'param_name': 'blacklist',
+         'policy_param_name': 'in_blacklist'}
+    ),
+
+    # Both in :pwd_blacklist and in policy
+    (
+        "foo",           # <- password
+        ["foo", "bar"],  # <- :pwd_blacklist
+        ["foo"],         # <- blacklist from policy
+        {'err': True,
+         'err_msg': 'password found in blacklist',
+         'exc': ExtrasCheckError('password found in blacklist',),
+         'param_name': 'blacklist',
+         'policy_param_name': 'in_blacklist'}
+    ),
+])
+def test_in_blacklist(pwd, pwd_blist, policy_blist, expected, mixed_policy):
+    mixed_policy.update({"blacklist": policy_blist})
+    res_dct = Extras(pwd, mixed_policy, pwd_blacklist=pwd_blist).as_dict
+
+    for key, val in expected.items():
+        if key == 'exc' and res_dct.in_blacklist['exc']:
+            assert isinstance(res_dct.in_blacklist[key], ExtrasCheckError)
+        else:
+            assert res_dct.in_blacklist[key] == val
 
 
 #
