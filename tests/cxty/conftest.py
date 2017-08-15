@@ -6,6 +6,7 @@ tests.cxty.conftest
 
 """
 
+import json
 from copy import deepcopy
 
 import pytest
@@ -27,6 +28,11 @@ def mixed_policy():
                            "lmin": 2,
                            "dmin": 2,
                            "omin": 2}}
+
+
+@pytest.fixture(scope='module')
+def mixed_policy_json(mixed_policy):
+    return json.dumps(mixed_policy)
 
 
 #
