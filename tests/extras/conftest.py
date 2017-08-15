@@ -6,6 +6,7 @@ tests.extras.conftest
 
 """
 
+import json
 from copy import deepcopy
 
 import pytest
@@ -24,6 +25,11 @@ def base_policy():
 def mixed_policy(base_policy):
     p = deepcopy(base_policy)
     return p
+
+
+@pytest.fixture(scope='function')
+def mixed_policy_json(mixed_policy):
+    return json.dumps(mixed_policy)
 
 
 @pytest.fixture(scope='module')
