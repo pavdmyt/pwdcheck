@@ -56,7 +56,7 @@ class Complexity(object):
 
     def __init__(self, pwd, policy):
         self._pwd = pwd
-        self._policy = policy.get("complexity", {})
+        self._policy = policy
 
     # There is no :from_yaml method since I don't want
     # to include PyYaml into deps. YAML support should
@@ -79,7 +79,7 @@ class Complexity(object):
     @cached_property
     def policy(self):
         if isinstance(self._policy, dict):
-            return Dotdict(self._policy)
+            return Dotdict(self._policy.get("complexity", {}))
         else:
             # accept obj's with attrs specified in
             # policy spec
