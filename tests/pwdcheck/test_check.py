@@ -23,9 +23,10 @@ def sanitize_key(dct, kname):
     for key, val in dct.items():
         if isinstance(val, type_):
             new_dct[key] = sanitize_key(val, kname)
-            continue
-        if key != kname:
+        elif key != kname:
             new_dct[key] = val
+        else:
+            continue
     return new_dct
 
 
