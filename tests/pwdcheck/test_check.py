@@ -10,6 +10,7 @@ Tests for `check` function.
 from pwdcheck import check
 from pwdcheck.cxty import Complexity
 from pwdcheck.extras import Extras
+# from pwdcheck.exceptions import PolicyParsingError
 
 
 def sanitize_key(dct, kname):
@@ -30,11 +31,20 @@ def sanitize_key(dct, kname):
     return new_dct
 
 
-def test_dict_policy(base_policy):
+def test_policy_types(policy):
+    if isinstance(policy, dict):
+        cxty_init = Complexity
+        extras_init = Extras
+    elif isinstance(policy, str):
+        cxty_init = Complexity.from_json
+        extras_init = Extras.from_json
+    else:
+        assert 0, "not implemented"
+
     pwd = "pwd"
-    _, res = check(pwd, base_policy)
-    cxty_dct = Complexity(pwd, base_policy).as_dict
-    extras_dct = Extras(pwd, base_policy).as_dict
+    _, res = check(pwd, policy)
+    cxty_dct = cxty_init(pwd, policy).as_dict
+    extras_dct = extras_init(pwd, policy).as_dict
 
     # Avoid `exc` fields since exceptions instances
     # break dicts equality test
