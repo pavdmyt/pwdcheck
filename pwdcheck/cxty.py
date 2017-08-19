@@ -13,7 +13,7 @@ import unicodedata as ud
 
 from pwdcheck.boltons.strutils import cardinalize
 
-from .exceptions import ComplexityCheckError
+from .exceptions import ComplexityCheckError, PolicyError
 from .helpers import Dotdict, cached_property
 
 
@@ -80,10 +80,7 @@ class Complexity(object):
     def policy(self):
         if isinstance(self._policy, dict):
             return Dotdict(self._policy.get("complexity", {}))
-        else:
-            # accept obj's with attrs specified in
-            # policy spec
-            raise NotImplementedError  # TODO: handle this
+        raise PolicyError("unsupported data type")
 
     def make_resp_dict(self, checker_func, policy_param_name):
         resp = Dotdict()

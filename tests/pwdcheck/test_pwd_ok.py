@@ -36,7 +36,7 @@ from pwdcheck.pwdcheck import _pwd_ok_check
     ("complexity", "schars", False),
 
     #
-    # extras error
+    # extras errors
     #
 
     # extras.in_blacklist error
