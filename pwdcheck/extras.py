@@ -9,7 +9,7 @@ Extras class.
 
 import json
 
-from .exceptions import DataTypeError, ExtrasCheckError
+from .exceptions import DataTypeError, ExtrasCheckError, PolicyError
 from .helpers import Dotdict, cached_property
 
 
@@ -143,10 +143,7 @@ class Extras(object):
     def policy(self):
         if isinstance(self._policy, dict):
             return Dotdict(self._policy.get("extras", {}))
-        else:
-            # accept obj's with attrs specified in
-            # policy spec
-            raise NotImplementedError  # TODO: handle this
+        raise PolicyError("unsupported data type")
 
     @cached_property
     def func_map(self):
