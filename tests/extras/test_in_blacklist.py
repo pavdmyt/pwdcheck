@@ -112,18 +112,18 @@ class TestBlacklistProperty:
         # non-iterable items
         for blacklist in (1, 1.0, lambda: 1):
             ext = Extras("pwd", mixed_policy, pwd_blacklist=blacklist)
+            err_msg = "object provided by 'pwd_blacklist' is not iterable"
 
             # Can be catched as pwdcheck.exceptions.DataTypeError
-            with pytest.raises(DataTypeError) as exc_info:
+            with pytest.raises(DataTypeError) as datatype_exc:
                 ext.blacklist  # pylint: disable=pointless-statement
-                assert ("object provided by 'pwd_blacklist' "
-                        "is not iterable") in exc_info
 
             # Can be catched as TypeError
-            with pytest.raises(TypeError) as exc_info:
+            with pytest.raises(TypeError) as type_exc:
                 ext.blacklist  # pylint: disable=pointless-statement
-                assert ("object provided by 'pwd_blacklist' "
-                        "is not iterable") in exc_info
+
+            assert str(datatype_exc.value) == err_msg
+            assert str(type_exc.value) == err_msg
 
     @pytest.mark.parametrize("blacklist, expected", [
         # Everything which evaluates into False

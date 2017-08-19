@@ -112,18 +112,18 @@ class TestDictionaryProperty:
         # non-iterable items
         for dictionary in (1, 1.0, lambda: 1):
             ext = Extras("pwd", mixed_policy, pwd_dict=dictionary)
+            err_msg = "object provided by 'pwd_dict' is not iterable"
 
             # Can be catched as pwdcheck.exceptions.DataTypeError
-            with pytest.raises(DataTypeError) as exc_info:
+            with pytest.raises(DataTypeError) as datatype_exc:
                 ext.dictionary  # pylint: disable=pointless-statement
-                assert ("object provided by 'pwd_dict' "
-                        "is not iterable") in exc_info
 
             # Can be catched as TypeError
-            with pytest.raises(TypeError) as exc_info:
+            with pytest.raises(TypeError) as type_exc:
                 ext.dictionary  # pylint: disable=pointless-statement
-                assert ("object provided by 'pwd_dict' "
-                        "is not iterable") in exc_info
+
+            assert str(datatype_exc.value) == err_msg
+            assert str(type_exc.value) == err_msg
 
     @pytest.mark.parametrize("dictionary, expected", [
         # Everything which evaluates into False
