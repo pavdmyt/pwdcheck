@@ -19,6 +19,8 @@ from .extras import Extras
 #       format into stdout and allow to use script output with PIPEs.
 #       (partially should be done at client side), here only smth
 #       like :as_json and :as_yaml API calls
+# TODO: create performance benchmark with testing a huge list of passwords
+#       against policy with long history, blacklist and monster dictionary
 
 
 def _pwd_ok_check(dct):
@@ -41,6 +43,7 @@ def check(pwd, policy, pwd_dict=None, pwd_blacklist=None, pwd_history=None):
                                       pwd_blacklist=pwd_blacklist,
                                       pwd_history=pwd_history)
         except ValueError as err:
+            # json.decoder.JSONDecodeError is inherited from ValueError
             # raised when invalid JSON in :policy str
             raise PolicyParsingError(err)
     # Common case

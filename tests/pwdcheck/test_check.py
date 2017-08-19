@@ -7,10 +7,12 @@ tests.pwdcheck.test_check
 Tests for `check` function.
 """
 
+import pytest
+
 from pwdcheck import check
 from pwdcheck.cxty import Complexity
+from pwdcheck.exceptions import PolicyParsingError
 from pwdcheck.extras import Extras
-# from pwdcheck.exceptions import PolicyParsingError
 
 
 def sanitize_key(dct, kname):
@@ -54,3 +56,9 @@ def test_policy_types(policy):
 
     assert res.complexity == cxty_dct
     assert res.extras == extras_dct
+
+
+def test_broken_json_policy(broken_json_policy):
+    with pytest.raises(PolicyParsingError) as exc_info:
+        check("pwd", broken_json_policy)
+    assert str(exc_info.value) == "Expecting value: line 1 column 1 (char 0)"
