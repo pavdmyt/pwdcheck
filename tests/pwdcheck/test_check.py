@@ -11,7 +11,7 @@ import pytest
 
 from pwdcheck import check
 from pwdcheck.cxty import Complexity
-from pwdcheck.exceptions import PolicyParsingError
+from pwdcheck.exceptions import PolicyError, PolicyParsingError
 from pwdcheck.extras import Extras
 
 
@@ -62,3 +62,9 @@ def test_broken_json_policy(broken_json_policy):
     with pytest.raises(PolicyParsingError) as exc_info:
         check("pwd", broken_json_policy)
     assert str(exc_info.value) == "Expecting value: line 1 column 1 (char 0)"
+
+
+def test_unsupporeted_policy_data_type():
+    with pytest.raises(PolicyError) as exc_info:
+        check("pwd", policy=[])
+    assert str(exc_info.value) == "unsupported policy data type"
