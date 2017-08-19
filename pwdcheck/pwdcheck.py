@@ -24,11 +24,11 @@ from .extras import Extras
 
 
 def _pwd_ok_check(dct):
-    cxty_dct = dct.complexity
-    extras_dct = dct.extras
+    cxty_dct = dct['complexity']
+    extras_dct = dct['extras']
 
-    cxty_errs = [val.err for val in cxty_dct.values()]
-    extras_errs = [val for val in extras_dct.values()]
+    cxty_errs = [data_dct["err"] for data_dct in cxty_dct.values()]
+    extras_errs = [data_dct["err"] for data_dct in extras_dct.values()]
 
     return not any(cxty_errs + extras_errs)
 

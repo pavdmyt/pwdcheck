@@ -12,6 +12,21 @@ from copy import deepcopy
 
 import pytest
 
+from pwdcheck.helpers import Dotdict
+
+
+def dotdictify(dct):
+    """Returns copy of the `dct` but with all `dict` objects
+    replaced with `Dotdict` objects.
+    """
+    dotdict = Dotdict()
+    for key, val in dct.items():
+        if isinstance(val, dict):
+            dotdict[key] = dotdictify(val)
+        else:
+            dotdict[key] = val
+    return dotdict
+
 
 @pytest.fixture(scope='module')
 def base_policy():
@@ -37,3 +52,67 @@ def mixed_policy(base_policy):
 @pytest.fixture(scope='function')
 def mixed_policy_json(mixed_policy):
     return json.dumps(mixed_policy)
+
+
+@pytest.fixture(scope='function')  # <- scope 'function' is important
+def pwd_ok_full_out():
+    # `dotdictify` required to imitate actual pwdcheck.check output
+    return dotdictify({
+        'complexity': {
+            'digits': {'aval': 2,
+                       'err': False,
+                       'err_msg': '',
+                       'exc': None,
+                       'param_name': 'digits',
+                       'policy_param_name': 'dmin',
+                       'pval': 2},
+            'length': {'aval': 14,
+                       'err': False,
+                       'err_msg': '',
+                       'exc': None,
+                       'param_name': 'length',
+                       'policy_param_name': 'minlen',
+                       'pval': 8},
+            'lowercase': {'aval': 8,
+                          'err': False,
+                          'err_msg': '',
+                          'exc': None,
+                          'param_name': 'lowercase',
+                          'policy_param_name': 'lmin',
+                          'pval': 2},
+            'schars': {'aval': 2,
+                       'err': False,
+                       'err_msg': '',
+                       'exc': None,
+                       'param_name': 'non-alphabetic',
+                       'policy_param_name': 'omin',
+                       'pval': 2},
+            'uppercase': {'aval': 2,
+                          'err': False,
+                          'err_msg': '',
+                          'exc': None,
+                          'param_name': 'uppercase',
+                          'policy_param_name': 'umin',
+                          'pval': 2}},
+        'extras': {
+            'in_blacklist': {'err': False,
+                             'err_msg': '',
+                             'exc': None,
+                             'param_name': 'blacklist',
+                             'policy_param_name': 'in_blacklist'},
+            'in_dictionary': {'err': False,
+                              'err_msg': '',
+                              'exc': None,
+                              'param_name': 'dictionary',
+                              'policy_param_name': 'in_dictionary'},
+            'in_history': {'err': False,
+                           'err_msg': '',
+                           'exc': None,
+                           'param_name': 'history',
+                           'policy_param_name': 'in_history'},
+            'palindrome': {'err': False,
+                           'err_msg': '',
+                           'exc': None,
+                           'param_name': 'palindrome',
+                           'policy_param_name': 'palindrome'}},
+    })
