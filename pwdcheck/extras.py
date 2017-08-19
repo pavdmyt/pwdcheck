@@ -49,6 +49,55 @@ class Extras(object):
         return inst
 
     @cached_property
+    def as_dict(self):
+        dct = Dotdict()
+
+        for check_name in self.policy.keys():
+            func = self.func_map.get(check_name)
+            dct[check_name] = self.make_resp_dict(func, check_name)
+
+        return dct
+
+    @cached_property
+    def policy(self):
+        if isinstance(self._policy, dict):
+            return Dotdict(self._policy.get("extras", {}))
+        raise PolicyError("unsupported data type")
+
+    def make_resp_dict(self, checker_func, policy_param_name):
+        resp = Dotdict()
+
+        # Skip unknown (unsupported) entries and
+        # Don't make checks if param is (0, false) or not specified at all
+        param = self.policy.get(policy_param_name)
+        if not (param and checker_func):
+            return resp  # empty dict
+
+        resp.err = checker_func(self._pwd)
+        resp.param_name = self._pname_policy_map[policy_param_name]
+        resp.policy_param_name = policy_param_name
+        resp.err_msg = self.compose_err_msg(resp)
+        resp.exc = ExtrasCheckError(
+            resp.err_msg,
+            param_name=resp.param_name,
+            policy_param_name=resp.policy_param_name,
+        ) if resp.err else None
+
+        return resp
+
+    @staticmethod
+    def compose_err_msg(resp_obj):
+        if not resp_obj.err:
+            return ""
+
+        if resp_obj.policy_param_name == "palindrome":
+            err_msg = "password is a palindrome"
+        else:
+            err_msg = "password found in {0}".format(resp_obj.param_name)
+
+        return err_msg
+
+    @cached_property
     def dictionary(self):
         # type: () -> List[str]
         return self._compose_pwd_list(self._pwd_dict, "dictionary")
@@ -95,55 +144,6 @@ class Extras(object):
 
         # Use `set` to avoid duplicates
         return list(set(pwd_list + pwds_from_policy))
-
-    @cached_property
-    def as_dict(self):
-        dct = Dotdict()
-
-        for check_name in self.policy.keys():
-            func = self.func_map.get(check_name)
-            dct[check_name] = self.make_resp_dict(func, check_name)
-
-        return dct
-
-    def make_resp_dict(self, checker_func, policy_param_name):
-        resp = Dotdict()
-
-        # Skip unknown (unsupported) entries and
-        # Don't make checks if param is (0, false) or not specified at all
-        param = self.policy.get(policy_param_name)
-        if not (param and checker_func):
-            return resp  # empty dict
-
-        resp.err = checker_func(self._pwd)
-        resp.param_name = self._pname_policy_map[policy_param_name]
-        resp.policy_param_name = policy_param_name
-        resp.err_msg = self.compose_err_msg(resp)
-        resp.exc = ExtrasCheckError(
-            resp.err_msg,
-            param_name=resp.param_name,
-            policy_param_name=resp.policy_param_name,
-        ) if resp.err else None
-
-        return resp
-
-    @staticmethod
-    def compose_err_msg(resp_obj):
-        if not resp_obj.err:
-            return ""
-
-        if resp_obj.policy_param_name == "palindrome":
-            err_msg = "password is a palindrome"
-        else:
-            err_msg = "password found in {0}".format(resp_obj.param_name)
-
-        return err_msg
-
-    @cached_property
-    def policy(self):
-        if isinstance(self._policy, dict):
-            return Dotdict(self._policy.get("extras", {}))
-        raise PolicyError("unsupported data type")
 
     @cached_property
     def func_map(self):

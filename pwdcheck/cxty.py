@@ -41,7 +41,7 @@ def count_schars(s):
     return sum([ud.category(i) in cats for i in s])
 
 
-# TODO: align with extras.Extras
+# XXX: abstractclass for Complexity and Extras?
 # TODO: add __str__ and __repr__
 class Complexity(object):
 
