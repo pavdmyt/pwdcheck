@@ -11,6 +11,7 @@ import json
 import string
 import unicodedata as ud
 
+# XXX: if cardinalizing only few words, better avoid boltons
 from pwdcheck.boltons.strutils import cardinalize
 
 from .exceptions import ComplexityCheckError, PolicyError
@@ -127,5 +128,6 @@ class Complexity(object):
                 cval, resp_obj.aval
             )
         else:
-            err_msg = "not yet ready!"
+            raise NotImplementedError
+
         return err_msg
