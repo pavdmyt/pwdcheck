@@ -61,3 +61,19 @@ def test_pwd_ok(param_type, param_name, expected, pwd_ok_full_out):
 
     pwd_ok = _pwd_ok_check(pwd_ok_full_out)
     assert pwd_ok == expected
+
+
+# Unsupported policy params or params which shouldn't be
+# checked will not be taken into consideration in `pwd_ok`
+@pytest.mark.parametrize("param_type, param_name, expected", [
+    ("complexity", "foobar", True),  # <- unsupported param
+    ("complexity", "digits", True),  # <- shouldn't be checked
+
+    ("extras", "foobar", True),      # <- unsupported param
+    ("extras", "in_history", True),  # <- shouldn't be checked
+])
+def test_unsupported_policy_param(param_type, param_name, expected,
+                                  pwd_ok_full_out):
+    pwd_ok_full_out[param_type][param_name] = {}
+    pwd_ok = _pwd_ok_check(pwd_ok_full_out)
+    assert pwd_ok == expected

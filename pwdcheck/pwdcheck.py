@@ -27,10 +27,13 @@ def _pwd_ok_check(dct):
     cxty_dct = dct['complexity']
     extras_dct = dct['extras']
 
-    cxty_errs = [data_dct["err"] for data_dct in cxty_dct.values()]
-    extras_errs = [data_dct["err"] for data_dct in extras_dct.values()]
+    # `data_dct.get("err", False)` - for unsupported policy param or case
+    #                                when corresponding check should be
+    #                                skipped (i.e. empty `data_dct`)
+    cxty_errs = [data_dct.get("err", False) for data_dct in cxty_dct.values()]
+    ext_errs = [data_dct.get("err", False) for data_dct in extras_dct.values()]
 
-    return not any(cxty_errs + extras_errs)
+    return not any(cxty_errs + ext_errs)
 
 
 def check(pwd, policy, pwd_dict=None, pwd_blacklist=None, pwd_history=None):
