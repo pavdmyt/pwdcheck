@@ -16,4 +16,7 @@ rsync -avz                    \
       --exclude ".mypy_cache" \
       --exclude "*.pyc"       \
       --exclude "*.egg-info"  \
+      --exclude ".coverage"   \
+      --exclude "htmlcov"     \
+      --exclude ".tox"        \
       $SRC $DST
