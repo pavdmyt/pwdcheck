@@ -7,6 +7,8 @@ pwdcheck.extras
 Extras class.
 """
 
+from __future__ import absolute_import
+
 import json
 
 from .exceptions import DataTypeError, ExtrasCheckError, PolicyError

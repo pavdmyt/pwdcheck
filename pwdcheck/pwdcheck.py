@@ -6,8 +6,11 @@ pwdcheck.pwdcheck
 
 """
 
+from __future__ import absolute_import
+
 from pwdcheck.helpers import Dotdict
 
+from .compat import builtin_str
 from .cxty import Complexity
 from .exceptions import PolicyError, PolicyParsingError
 from .extras import Extras
@@ -38,7 +41,7 @@ def _pwd_ok_check(dct):
 
 def check(pwd, policy, pwd_dict=None, pwd_blacklist=None, pwd_history=None):
     # JSON case
-    if isinstance(policy, str):
+    if isinstance(policy, builtin_str):
         try:
             cxty = Complexity.from_json(pwd, policy)
             extras = Extras.from_json(pwd, policy,

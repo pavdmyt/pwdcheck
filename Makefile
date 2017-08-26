@@ -41,7 +41,7 @@ lint-recent:
 	@./scripts/lint_recent.sh
 
 isort-all:
-	isort -rc --atomic --verbose .
+	isort -rc --atomic --verbose setup.py pwdcheck/ examples/ tests/
 
 isort-recent:
 	@./scripts/isort_recent.sh

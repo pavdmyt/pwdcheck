@@ -7,6 +7,8 @@ pwdcheck.cxty
 Complexity class.
 """
 
+from __future__ import absolute_import
+
 import json
 import string
 import unicodedata as ud
@@ -14,8 +16,16 @@ import unicodedata as ud
 # XXX: if cardinalizing only few words, better avoid boltons
 from pwdcheck.boltons.strutils import cardinalize
 
+from .compat import str
 from .exceptions import ComplexityCheckError, PolicyError
 from .helpers import Dotdict, cached_property
+
+
+# TODO: invesigate json imports:
+# try:
+#     import simplejson as json
+# except ImportError:
+#     import json
 
 
 def count_digits(s):
@@ -39,7 +49,7 @@ def count_schars(s):
     # Unicode categories:
     #   https://en.wikipedia.org/wiki/Template:General_Category_(Unicode)
     cats = ('Pc', 'Sc', 'Ps', 'Pe', 'Pd', 'Po', 'Sk', 'Sm', 'So')
-    return sum([ud.category(i) in cats for i in s])
+    return sum([ud.category(i) in cats for i in str(s)])
 
 
 # XXX: abstractclass for Complexity and Extras?

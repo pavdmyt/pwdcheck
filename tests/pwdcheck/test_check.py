@@ -10,6 +10,7 @@ Tests for `check` function.
 import pytest
 
 from pwdcheck import check
+from pwdcheck.compat import builtin_str, str
 from pwdcheck.cxty import Complexity
 from pwdcheck.exceptions import PolicyError, PolicyParsingError
 from pwdcheck.extras import Extras
@@ -37,7 +38,7 @@ def test_policy_types(policy):
     if isinstance(policy, dict):
         cxty_init = Complexity
         extras_init = Extras
-    elif isinstance(policy, str):
+    elif isinstance(policy, builtin_str):
         cxty_init = Complexity.from_json
         extras_init = Extras.from_json
     else:
@@ -61,7 +62,14 @@ def test_policy_types(policy):
 def test_broken_json_policy(broken_json_policy):
     with pytest.raises(PolicyParsingError) as exc_info:
         check("pwd", broken_json_policy)
-    assert str(exc_info.value) == "Expecting value: line 1 column 1 (char 0)"
+
+    assert str(exc_info.value) in (
+        # Python 3
+        "Expecting value: line 1 column 1 (char 0)",
+
+        # Python 2
+        "No JSON object could be decoded",
+    )
 
 
 def test_unsupporeted_policy_data_type():
