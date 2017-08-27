@@ -1,3 +1,5 @@
 [run]
 branch = True
-omit = pwdcheck/boltons/*
+omit =
+    pwdcheck/boltons/*
+    pwdcheck/compat.py
