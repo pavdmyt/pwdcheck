@@ -4,6 +4,8 @@
 Basic building blocks to show pwdcheck API usage examples.
 """
 
+from __future__ import absolute_import
+
 import os
 import sys
 from getpass import getpass

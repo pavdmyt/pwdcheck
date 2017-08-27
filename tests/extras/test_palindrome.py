@@ -19,7 +19,7 @@ from pwdcheck.extras import Extras
 def test_false_palindrome(false_palindrome_policy):
     # "palindrome": false
     res_dct = Extras("foobar", false_palindrome_policy).as_dict
-    assert res_dct.palindrome == {}
+    assert "palindrome" not in res_dct.keys()
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

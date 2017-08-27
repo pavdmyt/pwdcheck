@@ -19,7 +19,7 @@ from pwdcheck.extras import Extras
 def test_false_in_history(false_in_history_policy):
     # "in_history": false
     res_dct = Extras("foobar", false_in_history_policy).as_dict
-    assert res_dct.in_history == {}
+    assert "in_history" not in res_dct.keys()
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

@@ -19,7 +19,7 @@ from pwdcheck.extras import Extras
 def test_false_in_blacklist(false_in_blacklist_policy):
     # "in_blacklist": false
     res_dct = Extras("foobar", false_in_blacklist_policy).as_dict
-    assert res_dct.in_blacklist == {}
+    assert "in_blacklist" not in res_dct.keys()
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

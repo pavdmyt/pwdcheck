@@ -55,8 +55,9 @@ class Extras(object):
         dct = Dotdict()
 
         for check_name in self.policy.keys():
-            func = self.func_map.get(check_name)
-            dct[check_name] = self.make_resp_dict(func, check_name)
+            if self.policy[check_name]:
+                func = self.func_map.get(check_name)
+                dct[check_name] = self.make_resp_dict(func, check_name)
 
         return dct
 

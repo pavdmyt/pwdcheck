@@ -79,6 +79,7 @@ class Complexity(object):
 
     @cached_property
     def as_dict(self):
+        # XXX: align with Extras.as_dict (all params handled in loop)
         dct = Dotdict()
         dct.length = self.make_resp_dict(len, "minlen")
         dct.uppercase = self.make_resp_dict(count_ucase, "umin")
