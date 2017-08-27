@@ -4,7 +4,7 @@
 Basic building blocks to show pwdcheck API usage examples.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import os
 import sys
@@ -15,7 +15,7 @@ from yaml import load
 
 # $ pip install -e pwdcheck
 # XXX: should be before pwdcheck import
-import _install_hook
+import _install_hook  # noqa
 
 import pwdcheck
 from _data import BLACKLIST, HISTORY, PWD_DICT

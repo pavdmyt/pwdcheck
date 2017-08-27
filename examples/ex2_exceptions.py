@@ -8,6 +8,8 @@ if provided password policy violated.
 pwdcheck API demonstration.
 """
 
+from __future__ import absolute_import, print_function
+
 from _base import CliExample
 from pwdcheck.exceptions import BaseCheckError
 
