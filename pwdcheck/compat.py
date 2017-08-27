@@ -10,6 +10,12 @@ py2/py3 compatibility support.
 import sys
 
 
+try:
+    import simplejson as json   # noqa
+except ImportError:
+    import json                 # noqa
+
+
 PY2 = sys.version_info[0] == 2
 
 

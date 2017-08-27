@@ -9,23 +9,15 @@ Complexity class.
 
 from __future__ import absolute_import
 
-import json
 import string
 import unicodedata as ud
 
 # XXX: if cardinalizing only few words, better avoid boltons
 from pwdcheck.boltons.strutils import cardinalize
 
-from .compat import str
+from .compat import json, str
 from .exceptions import ComplexityCheckError, PolicyError
 from .helpers import Dotdict, cached_property
-
-
-# TODO: invesigate json imports:
-# try:
-#     import simplejson as json
-# except ImportError:
-#     import json
 
 
 def count_digits(s):

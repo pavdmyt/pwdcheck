@@ -9,8 +9,7 @@ Extras class.
 
 from __future__ import absolute_import
 
-import json
-
+from .compat import json
 from .exceptions import DataTypeError, ExtrasCheckError, PolicyError
 from .helpers import Dotdict, cached_property
 
@@ -54,6 +53,7 @@ class Extras(object):
     def as_dict(self):
         dct = Dotdict()
 
+        # TODO: raise exception for unsupported policy param
         for check_name in self.policy.keys():
             if self.policy[check_name]:
                 func = self.func_map.get(check_name)
