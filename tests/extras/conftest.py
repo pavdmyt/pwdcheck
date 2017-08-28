@@ -37,3 +37,18 @@ def false_in_history_policy(base_policy):
     p = deepcopy(base_policy)
     p["extras"]["in_history"] = False
     return p
+
+
+@pytest.fixture(scope='module', params=[
+    "true-value",
+    "false-value",
+])
+def unknown_param_policy(request, base_policy):
+    p = deepcopy(base_policy)
+
+    if request.param == "true-value":
+        p["extras"]["foo-param"] = True
+    if request.param == "false-value":
+        p["extras"]["foo-param"] = False
+
+    return p

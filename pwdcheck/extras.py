@@ -53,8 +53,13 @@ class Extras(object):
     def as_dict(self):
         dct = Dotdict()
 
-        # TODO: raise exception for unsupported policy param
         for check_name in self.policy.keys():
+            # Unsupported policy entry
+            if check_name not in self._pname_policy_map.keys():
+                raise PolicyError(
+                    "{}: unknown policy parameter".format(check_name)
+                )
+
             if self.policy[check_name]:
                 func = self.func_map.get(check_name)
                 dct[check_name] = self.make_resp_dict(func, check_name)

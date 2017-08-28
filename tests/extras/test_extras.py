@@ -32,3 +32,9 @@ def test_policy_property(policy_obj, exc_type):
         assert str(exc_info.value) == "unsupported data type"
     else:
         assert isinstance(extras.policy, dict)
+
+
+def test_unknown_policy_param(unknown_param_policy):
+    with pytest.raises(PolicyError) as exc_info:
+        Extras("foobar", unknown_param_policy).as_dict
+    assert str(exc_info.value) == "foo-param: unknown policy parameter"
