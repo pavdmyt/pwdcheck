@@ -9,7 +9,6 @@ Complexity class.
 
 from __future__ import absolute_import
 
-import string
 import unicodedata as ud
 
 # XXX: if cardinalizing only few words, better avoid boltons
@@ -18,30 +17,6 @@ from pwdcheck.boltons.strutils import cardinalize
 from .compat import json, str
 from .exceptions import ComplexityCheckError, PolicyError
 from .helpers import Dotdict, cached_property
-
-
-def count_digits(s):
-    # type: (str) -> int
-    return sum([i in string.digits for i in s])
-
-
-def count_ucase(s):
-    # type: (str) -> int
-    return sum([i.isupper() for i in s])
-
-
-def count_lcase(s):
-    # type: (str) -> int
-    return sum([i.islower() for i in s])
-
-
-def count_schars(s):
-    # type: (str) -> int
-    #
-    # Unicode categories:
-    #   https://en.wikipedia.org/wiki/Template:General_Category_(Unicode)
-    cats = ('Pc', 'Sc', 'Ps', 'Pe', 'Pd', 'Po', 'Sk', 'Sm', 'So')
-    return sum([ud.category(i) in cats for i in str(s)])
 
 
 # XXX: abstractclass for Complexity and Extras?
@@ -71,13 +46,12 @@ class Complexity(object):
 
     @cached_property
     def as_dict(self):
-        # XXX: align with Extras.as_dict (all params handled in loop)
         dct = Dotdict()
         dct.length = self.make_resp_dict(len, "minlen")
-        dct.uppercase = self.make_resp_dict(count_ucase, "umin")
-        dct.lowercase = self.make_resp_dict(count_lcase, "lmin")
-        dct.digits = self.make_resp_dict(count_digits, "dmin")
-        dct.schars = self.make_resp_dict(count_schars, "omin")
+        dct.uppercase = self.make_resp_dict(self.count_ucase, "umin")
+        dct.lowercase = self.make_resp_dict(self.count_lcase, "lmin")
+        dct.digits = self.make_resp_dict(self.count_digits, "dmin")
+        dct.schars = self.make_resp_dict(self.count_schars, "omin")
         return dct
 
     @cached_property
@@ -134,3 +108,27 @@ class Complexity(object):
             raise NotImplementedError
 
         return err_msg
+
+    @staticmethod
+    def count_digits(s):
+        # type: (str) -> int
+        return sum([i.isdigit() for i in s])
+
+    @staticmethod
+    def count_ucase(s):
+        # type: (str) -> int
+        return sum([i.isupper() for i in s])
+
+    @staticmethod
+    def count_lcase(s):
+        # type: (str) -> int
+        return sum([i.islower() for i in s])
+
+    @staticmethod
+    def count_schars(s):
+        # type: (str) -> int
+        #
+        # Unicode categories:
+        #   https://en.wikipedia.org/wiki/Template:General_Category_(Unicode)
+        cats = ('Pc', 'Sc', 'Ps', 'Pe', 'Pd', 'Po', 'Sk', 'Sm', 'So')
+        return sum([ud.category(i) in cats for i in str(s)])
