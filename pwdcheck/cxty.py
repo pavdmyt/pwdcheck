@@ -63,9 +63,9 @@ class Complexity(object):
     def make_resp_dict(self, checker_func, policy_param_name):
         resp = Dotdict()
 
-        # Don't make checks if param is (0, false) or not specified at all
+        # Don't make checks if param is (False, None) or not specified at all
         param = self.policy.get(policy_param_name)
-        if not param:
+        if param is False or param is None:
             return resp  # empty dict
 
         resp.aval = checker_func(self._pwd)                  # actual value

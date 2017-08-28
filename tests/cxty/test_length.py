@@ -16,13 +16,27 @@ from pwdcheck.exceptions import ComplexityCheckError
 def test_zero_length(zero_len_policy):
     # "minlen": 0
     res_dct = Complexity("foobar", zero_len_policy).as_dict
-    assert res_dct.length == {}
+    expected = {
+        'aval': 6,
+        'err': False,
+        'err_msg': '',
+        'exc': None,
+        'param_name': 'length',
+        'policy_param_name': 'minlen',
+        'pval': 0
+    }
+    assert res_dct.length == expected
 
 
 def test_false_length(false_len_policy):
     # "minlen": false
     res_dct = Complexity("foobar", false_len_policy).as_dict
     assert res_dct.length == {}
+
+
+def test_param_not_specified():
+    # no "minlen" in policy
+    pass
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

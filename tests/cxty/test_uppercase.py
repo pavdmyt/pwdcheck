@@ -16,13 +16,27 @@ from pwdcheck.exceptions import ComplexityCheckError
 def test_zero_uppercase(zero_umin_policy):
     # "umin": 0
     res_dct = Complexity("foobar", zero_umin_policy).as_dict
-    assert res_dct.uppercase == {}
+    expected = {
+        'aval': 0,
+        'err': False,
+        'err_msg': '',
+        'exc': None,
+        'param_name': 'uppercase',
+        'policy_param_name': 'umin',
+        'pval': 0
+    }
+    assert res_dct.uppercase == expected
 
 
 def test_false_uppercase(false_umin_policy):
     # "umin": false
     res_dct = Complexity("foobar", false_umin_policy).as_dict
     assert res_dct.uppercase == {}
+
+
+def test_param_not_specified():
+    # no "umin" in policy
+    pass
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

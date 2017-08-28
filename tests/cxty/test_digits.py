@@ -16,13 +16,27 @@ from pwdcheck.exceptions import ComplexityCheckError
 def test_zero_digits(zero_digits_policy):
     # "dmin": 0
     res_dct = Complexity("foobar", zero_digits_policy).as_dict
-    assert res_dct.digits == {}
+    expected = {
+        'aval': 0,
+        'err': False,
+        'err_msg': '',
+        'exc': None,
+        'param_name': 'digits',
+        'policy_param_name': 'dmin',
+        'pval': 0
+    }
+    assert res_dct.digits == expected
 
 
 def test_false_digits(false_digits_policy):
     # "dmin": false
     res_dct = Complexity("foobar", false_digits_policy).as_dict
     assert res_dct.digits == {}
+
+
+def test_param_not_specified():
+    # no "dmin" in policy
+    pass
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

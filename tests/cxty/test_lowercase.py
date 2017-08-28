@@ -16,7 +16,21 @@ from pwdcheck.exceptions import ComplexityCheckError
 def test_zero_lowercase(zero_lmin_policy):
     # "lmin": 0
     res_dct = Complexity("foobar", zero_lmin_policy).as_dict
-    assert res_dct.lowercase == {}
+    expected = {
+        'aval': 6,
+        'err': False,
+        'err_msg': '',
+        'exc': None,
+        'param_name': 'lowercase',
+        'policy_param_name': 'lmin',
+        'pval': 0
+    }
+    assert res_dct.lowercase == expected
+
+
+def test_param_not_specified():
+    # no "lmin" in policy
+    pass
 
 
 def test_false_lowercase(false_lmin_policy):

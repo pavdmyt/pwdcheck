@@ -16,13 +16,27 @@ from pwdcheck.exceptions import ComplexityCheckError
 def test_zero_schars(zero_omin_policy):
     # "omin": 0
     res_dct = Complexity("foobar", zero_omin_policy).as_dict
-    assert res_dct.schars == {}
+    expected = {
+        'aval': 0,
+        'err': False,
+        'err_msg': '',
+        'exc': None,
+        'param_name': 'non-alphabetic',
+        'policy_param_name': 'omin',
+        'pval': 0
+    }
+    assert res_dct.schars == expected
 
 
 def test_false_schars(false_omin_policy):
     # "omin": false
     res_dct = Complexity("foobar", false_omin_policy).as_dict
     assert res_dct.schars == {}
+
+
+def test_param_not_specified():
+    # no "omin" in policy
+    pass
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):
