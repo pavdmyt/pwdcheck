@@ -11,6 +11,30 @@ from copy import deepcopy
 import pytest
 
 
+@pytest.fixture(scope='module', params=[
+    "true-value",
+    "false-value",
+    "zero-value",
+    "one-value",
+])
+def unknown_param_policy(request, base_policy):
+    p = deepcopy(base_policy)
+
+    if request.param == "true-value":
+        p["complexity"]["foo-param"] = True
+
+    if request.param == "false-value":
+        p["complexity"]["foo-param"] = False
+
+    if request.param == "zero-value":
+        p["complexity"]["foo-param"] = 0
+
+    if request.param == "one-value":
+        p["complexity"]["foo-param"] = 1
+
+    return p
+
+
 #
 # minlen
 #

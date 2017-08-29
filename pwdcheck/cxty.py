@@ -52,7 +52,7 @@ class Complexity(object):
             # Unsupported policy entry
             if check_name not in self._pname_policy_map.keys():
                 raise PolicyError(
-                    "{0}: unknown policy parameter".format(check_name)
+                    "unknown policy parameter '{0}'".format(check_name)
                 )
 
             # TODO: fix case when :check_name set to non-int value

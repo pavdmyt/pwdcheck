@@ -37,4 +37,4 @@ def test_policy_property(policy_obj, exc_type):
 def test_unknown_policy_param(unknown_param_policy):
     with pytest.raises(PolicyError) as exc_info:
         Extras("foobar", unknown_param_policy).as_dict
-    assert str(exc_info.value) == "foo-param: unknown policy parameter"
+    assert str(exc_info.value) == "unknown policy parameter 'foo-param'"
