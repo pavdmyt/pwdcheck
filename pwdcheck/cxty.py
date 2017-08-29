@@ -29,7 +29,7 @@ class Complexity(object):
         "umin":         "uppercase",
         "lmin":         "lowercase",
         "dmin":         "digits",
-        "omin":         "non-alphabetic",
+        "omin":         "special",
     }
 
     def __init__(self, pwd, policy):
@@ -47,11 +47,20 @@ class Complexity(object):
     @cached_property
     def as_dict(self):
         dct = Dotdict()
-        dct.length = self.make_resp_dict(len, "minlen")
-        dct.uppercase = self.make_resp_dict(self.count_ucase, "umin")
-        dct.lowercase = self.make_resp_dict(self.count_lcase, "lmin")
-        dct.digits = self.make_resp_dict(self.count_digits, "dmin")
-        dct.schars = self.make_resp_dict(self.count_schars, "omin")
+
+        for check_name in self.policy.keys():
+            # Unsupported policy entry
+            if check_name not in self._pname_policy_map.keys():
+                raise PolicyError(
+                    "{0}: unknown policy parameter".format(check_name)
+                )
+
+            # TODO: fix case when :check_name set to non-int value
+            if self.policy[check_name] >= 0:
+                func = self.func_map.get(check_name)
+                out_name = self._pname_policy_map[check_name]
+                dct[out_name] = self.make_resp_dict(func, check_name)
+
         return dct
 
     @cached_property
@@ -109,26 +118,29 @@ class Complexity(object):
 
         return err_msg
 
-    @staticmethod
-    def count_digits(s):
-        # type: (str) -> int
-        return sum([i.isdigit() for i in s])
+    @cached_property
+    def func_map(self):
+        return {
+            "dmin":   self.make_counter('isdigit'),
+            "umin":   self.make_counter('isupper'),
+            "lmin":   self.make_counter('islower'),
+            "omin":   self.count_special,
+            "minlen": len,
+        }
 
     @staticmethod
-    def count_ucase(s):
-        # type: (str) -> int
-        return sum([i.isupper() for i in s])
-
-    @staticmethod
-    def count_lcase(s):
-        # type: (str) -> int
-        return sum([i.islower() for i in s])
-
-    @staticmethod
-    def count_schars(s):
+    def count_special(s):
         # type: (str) -> int
         #
         # Unicode categories:
         #   https://en.wikipedia.org/wiki/Template:General_Category_(Unicode)
         cats = ('Pc', 'Sc', 'Ps', 'Pe', 'Pd', 'Po', 'Sk', 'Sm', 'So')
         return sum([ud.category(i) in cats for i in str(s)])
+
+    @staticmethod
+    def make_counter(func_name):
+        def count_func(s):
+            return sum(
+                [getattr(i, func_name)() for i in s]
+            )
+        return count_func

@@ -13,9 +13,9 @@ from pwdcheck.cxty import Complexity
 from pwdcheck.exceptions import ComplexityCheckError
 
 
-def test_zero_length(zero_len_policy):
+def test_zero_minlen(zero_minlen_policy):
     # "minlen": 0
-    res_dct = Complexity("foobar", zero_len_policy).as_dict
+    res_dct = Complexity("foobar", zero_minlen_policy).as_dict
     expected = {
         'aval': 6,
         'err': False,
@@ -28,10 +28,10 @@ def test_zero_length(zero_len_policy):
     assert res_dct.length == expected
 
 
-def test_false_length(false_len_policy):
+def test_none_minlen(none_minlen_policy):
     # "minlen": false
-    res_dct = Complexity("foobar", false_len_policy).as_dict
-    assert res_dct.length == {}
+    res_dct = Complexity("foobar", none_minlen_policy).as_dict
+    assert Complexity._pname_policy_map["minlen"] not in res_dct.keys()
 
 
 def test_param_not_specified():

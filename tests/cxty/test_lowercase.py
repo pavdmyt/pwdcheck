@@ -28,15 +28,16 @@ def test_zero_lowercase(zero_lmin_policy):
     assert res_dct.lowercase == expected
 
 
-def test_param_not_specified():
-    # no "lmin" in policy
-    pass
-
-
 def test_false_lowercase(false_lmin_policy):
     # "lmin": false
     res_dct = Complexity("foobar", false_lmin_policy).as_dict
     assert res_dct.lowercase == {}
+
+
+def test_none_lmin(none_lmin_policy):
+    # no "lmin" in policy
+    res_dct = Complexity("foobar", none_lmin_policy).as_dict
+    assert Complexity._pname_policy_map["lmin"] not in res_dct.keys()
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

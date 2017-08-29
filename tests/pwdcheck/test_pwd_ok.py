@@ -32,8 +32,8 @@ from pwdcheck.pwdcheck import _pwd_ok_check
     # complexity.uppercase error
     ("complexity", "uppercase", False),
 
-    # complexity.schars error
-    ("complexity", "schars", False),
+    # complexity.special error
+    ("complexity", "special", False),
 
     #
     # extras errors

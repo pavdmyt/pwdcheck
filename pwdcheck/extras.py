@@ -57,9 +57,10 @@ class Extras(object):
             # Unsupported policy entry
             if check_name not in self._pname_policy_map.keys():
                 raise PolicyError(
-                    "{}: unknown policy parameter".format(check_name)
+                    "{0}: unknown policy parameter".format(check_name)
                 )
 
+            # TODO: keys should not be policy_param_name's
             if self.policy[check_name]:
                 func = self.func_map.get(check_name)
                 dct[check_name] = self.make_resp_dict(func, check_name)

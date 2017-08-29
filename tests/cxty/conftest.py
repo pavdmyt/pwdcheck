@@ -15,16 +15,23 @@ import pytest
 # minlen
 #
 @pytest.fixture(scope='module')
-def zero_len_policy(base_policy):
+def zero_minlen_policy(base_policy):
     p = deepcopy(base_policy)
     p["complexity"]["minlen"] = 0
     return p
 
 
 @pytest.fixture(scope='module')
-def false_len_policy(base_policy):
+def false_minlen_policy(base_policy):
     p = deepcopy(base_policy)
     p["complexity"]["minlen"] = False
+    return p
+
+
+@pytest.fixture(scope='module')
+def none_minlen_policy(base_policy):
+    p = deepcopy(base_policy)
+    del p["complexity"]["minlen"]
     return p
 
 
@@ -32,16 +39,23 @@ def false_len_policy(base_policy):
 # dmin
 #
 @pytest.fixture(scope='module')
-def zero_digits_policy(base_policy):
+def zero_dmin_policy(base_policy):
     p = deepcopy(base_policy)
     p["complexity"]["dmin"] = 0
     return p
 
 
 @pytest.fixture(scope='module')
-def false_digits_policy(base_policy):
+def false_dmin_policy(base_policy):
     p = deepcopy(base_policy)
     p["complexity"]["dmin"] = False
+    return p
+
+
+@pytest.fixture(scope='module')
+def none_dmin_policy(base_policy):
+    p = deepcopy(base_policy)
+    del p["complexity"]["dmin"]
     return p
 
 
@@ -62,6 +76,13 @@ def false_umin_policy(base_policy):
     return p
 
 
+@pytest.fixture(scope='module')
+def none_umin_policy(base_policy):
+    p = deepcopy(base_policy)
+    del p["complexity"]["umin"]
+    return p
+
+
 #
 # lowercase
 #
@@ -79,8 +100,15 @@ def false_lmin_policy(base_policy):
     return p
 
 
+@pytest.fixture(scope='module')
+def none_lmin_policy(base_policy):
+    p = deepcopy(base_policy)
+    del p["complexity"]["lmin"]
+    return p
+
+
 #
-# schars
+# special
 #
 @pytest.fixture(scope='module')
 def zero_omin_policy(base_policy):
@@ -93,4 +121,11 @@ def zero_omin_policy(base_policy):
 def false_omin_policy(base_policy):
     p = deepcopy(base_policy)
     p["complexity"]["omin"] = False
+    return p
+
+
+@pytest.fixture(scope='module')
+def none_omin_policy(base_policy):
+    p = deepcopy(base_policy)
+    del p["complexity"]["omin"]
     return p

@@ -13,9 +13,9 @@ from pwdcheck.cxty import Complexity
 from pwdcheck.exceptions import ComplexityCheckError
 
 
-def test_zero_digits(zero_digits_policy):
+def test_zero_dmin(zero_dmin_policy):
     # "dmin": 0
-    res_dct = Complexity("foobar", zero_digits_policy).as_dict
+    res_dct = Complexity("foobar", zero_dmin_policy).as_dict
     expected = {
         'aval': 0,
         'err': False,
@@ -28,15 +28,16 @@ def test_zero_digits(zero_digits_policy):
     assert res_dct.digits == expected
 
 
-def test_false_digits(false_digits_policy):
+def test_false_dmin(false_dmin_policy):
     # "dmin": false
-    res_dct = Complexity("foobar", false_digits_policy).as_dict
+    res_dct = Complexity("foobar", false_dmin_policy).as_dict
     assert res_dct.digits == {}
 
 
-def test_param_not_specified():
+def test_none_dmin(none_dmin_policy):
     # no "dmin" in policy
-    pass
+    res_dct = Complexity("foobar", none_dmin_policy).as_dict
+    assert Complexity._pname_policy_map["dmin"] not in res_dct.keys()
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

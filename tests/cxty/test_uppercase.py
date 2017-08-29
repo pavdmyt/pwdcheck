@@ -34,9 +34,10 @@ def test_false_uppercase(false_umin_policy):
     assert res_dct.uppercase == {}
 
 
-def test_param_not_specified():
+def test_none_umin(none_umin_policy):
     # no "umin" in policy
-    pass
+    res_dct = Complexity("foobar", none_umin_policy).as_dict
+    assert Complexity._pname_policy_map["umin"] not in res_dct.keys()
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):
