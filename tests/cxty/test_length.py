@@ -29,15 +29,9 @@ def test_zero_minlen(zero_minlen_policy):
 
 
 def test_none_minlen(none_minlen_policy):
-    # "minlen": false
+    # no "minlen" in policy
     res_dct = Complexity("foobar", none_minlen_policy).as_dict
     assert Complexity._pname_policy_map["minlen"] not in res_dct.keys()
-
-
-# TODO: implent no-param unittests
-def test_param_not_specified():
-    # no "minlen" in policy
-    pass
 
 
 def test_nonint_dmin(nonint_minlen_policy):
