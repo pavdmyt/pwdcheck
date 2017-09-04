@@ -35,6 +35,38 @@ def unknown_param_policy(request, base_policy):
     return p
 
 
+# Non-int policies
+def compose_nonint(policy_param_name):
+
+    @pytest.fixture(scope='module', params=[
+        "true-value",
+        "false-value",
+        "foo-value",
+        "list-value",
+    ])
+    def nonint_policies(request, base_policy):
+        p = deepcopy(base_policy)
+
+        if request.param == "true-value":
+            p["complexity"][policy_param_name] = True
+        if request.param == "false-value":
+            p["complexity"][policy_param_name] = False
+        if request.param == "foo-value":
+            p["complexity"][policy_param_name] = "foo"
+        if request.param == "list-value":
+            p["complexity"][policy_param_name] = [1, 2, 3]
+
+        return p
+    return nonint_policies
+
+
+nonint_minlen_policy = compose_nonint("minlen")
+nonint_dmin_policy = compose_nonint("dmin")
+nonint_lmin_policy = compose_nonint("lmin")
+nonint_umin_policy = compose_nonint("umin")
+nonint_omin_policy = compose_nonint("omin")
+
+
 #
 # minlen
 #
@@ -42,13 +74,6 @@ def unknown_param_policy(request, base_policy):
 def zero_minlen_policy(base_policy):
     p = deepcopy(base_policy)
     p["complexity"]["minlen"] = 0
-    return p
-
-
-@pytest.fixture(scope='module')
-def false_minlen_policy(base_policy):
-    p = deepcopy(base_policy)
-    p["complexity"]["minlen"] = False
     return p
 
 
@@ -70,13 +95,6 @@ def zero_dmin_policy(base_policy):
 
 
 @pytest.fixture(scope='module')
-def false_dmin_policy(base_policy):
-    p = deepcopy(base_policy)
-    p["complexity"]["dmin"] = False
-    return p
-
-
-@pytest.fixture(scope='module')
 def none_dmin_policy(base_policy):
     p = deepcopy(base_policy)
     del p["complexity"]["dmin"]
@@ -90,13 +108,6 @@ def none_dmin_policy(base_policy):
 def zero_umin_policy(base_policy):
     p = deepcopy(base_policy)
     p["complexity"]["umin"] = 0
-    return p
-
-
-@pytest.fixture(scope='module')
-def false_umin_policy(base_policy):
-    p = deepcopy(base_policy)
-    p["complexity"]["umin"] = False
     return p
 
 
@@ -118,13 +129,6 @@ def zero_lmin_policy(base_policy):
 
 
 @pytest.fixture(scope='module')
-def false_lmin_policy(base_policy):
-    p = deepcopy(base_policy)
-    p["complexity"]["lmin"] = False
-    return p
-
-
-@pytest.fixture(scope='module')
 def none_lmin_policy(base_policy):
     p = deepcopy(base_policy)
     del p["complexity"]["lmin"]
@@ -138,13 +142,6 @@ def none_lmin_policy(base_policy):
 def zero_omin_policy(base_policy):
     p = deepcopy(base_policy)
     p["complexity"]["omin"] = 0
-    return p
-
-
-@pytest.fixture(scope='module')
-def false_omin_policy(base_policy):
-    p = deepcopy(base_policy)
-    p["complexity"]["omin"] = False
     return p
 
 

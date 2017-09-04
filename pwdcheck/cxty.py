@@ -14,7 +14,7 @@ import unicodedata as ud
 # XXX: if cardinalizing only few words, better avoid boltons
 from pwdcheck.boltons.strutils import cardinalize
 
-from .compat import json, str
+from .compat import integer_types, json, str
 from .exceptions import ComplexityCheckError, PolicyError
 from .helpers import Dotdict, cached_property
 
@@ -55,8 +55,24 @@ class Complexity(object):
                     "unknown policy parameter '{0}'".format(check_name)
                 )
 
-            # TODO: fix case when :check_name set to non-int value
-            if self.policy[check_name] >= 0:
+            # Ensure :check_val is int
+            check_val = self.policy[check_name]
+
+            # `bool` is a subclass of `int`
+            #
+            # >>> bool.mro()
+            # [bool, int, object]
+            is_bool = type(check_val) is bool
+            is_int = isinstance(check_val, integer_types)
+
+            if is_bool or not is_int:
+                raise PolicyError(
+                    "{0}: non-int value set to '{1}' parameter"
+                    .format(check_val, check_name)
+                )
+
+            # Process
+            if check_val >= 0:
                 func = self.func_map.get(check_name)
                 out_name = self._pname_policy_map[check_name]
                 dct[out_name] = self.make_resp_dict(func, check_name)
@@ -71,11 +87,6 @@ class Complexity(object):
 
     def make_resp_dict(self, checker_func, policy_param_name):
         resp = Dotdict()
-
-        # Don't make checks if param is (False, None) or not specified at all
-        param = self.policy.get(policy_param_name)
-        if param is False or param is None:
-            return resp  # empty dict
 
         resp.aval = checker_func(self._pwd)                  # actual value
         resp.pval = getattr(self.policy, policy_param_name)  # policy value

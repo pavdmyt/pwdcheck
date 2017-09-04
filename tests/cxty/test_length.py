@@ -10,7 +10,7 @@ Tests for "length" output param.
 import pytest
 
 from pwdcheck.cxty import Complexity
-from pwdcheck.exceptions import ComplexityCheckError
+from pwdcheck.exceptions import ComplexityCheckError, PolicyError
 
 
 def test_zero_minlen(zero_minlen_policy):
@@ -34,9 +34,17 @@ def test_none_minlen(none_minlen_policy):
     assert Complexity._pname_policy_map["minlen"] not in res_dct.keys()
 
 
+# TODO: implent no-param unittests
 def test_param_not_specified():
     # no "minlen" in policy
     pass
+
+
+def test_nonint_dmin(nonint_minlen_policy):
+    # non-int type: "minlen"
+    with pytest.raises(PolicyError) as exc_info:
+        Complexity("foobar", nonint_minlen_policy).as_dict
+    assert "non-int value set to" in str(exc_info.value)
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

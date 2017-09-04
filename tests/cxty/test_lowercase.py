@@ -10,7 +10,7 @@ Tests for "lowercase" output param.
 import pytest
 
 from pwdcheck.cxty import Complexity
-from pwdcheck.exceptions import ComplexityCheckError
+from pwdcheck.exceptions import ComplexityCheckError, PolicyError
 
 
 def test_zero_lowercase(zero_lmin_policy):
@@ -28,16 +28,17 @@ def test_zero_lowercase(zero_lmin_policy):
     assert res_dct.lowercase == expected
 
 
-def test_false_lowercase(false_lmin_policy):
-    # "lmin": false
-    res_dct = Complexity("foobar", false_lmin_policy).as_dict
-    assert res_dct.lowercase == {}
-
-
 def test_none_lmin(none_lmin_policy):
     # no "lmin" in policy
     res_dct = Complexity("foobar", none_lmin_policy).as_dict
     assert Complexity._pname_policy_map["lmin"] not in res_dct.keys()
+
+
+def test_nonint_lmin(nonint_lmin_policy):
+    # non-int type: "lmin"
+    with pytest.raises(PolicyError) as exc_info:
+        Complexity("foobar", nonint_lmin_policy).as_dict
+    assert "non-int value set to" in str(exc_info.value)
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

@@ -10,7 +10,7 @@ Tests for "uppercase" output param.
 import pytest
 
 from pwdcheck.cxty import Complexity
-from pwdcheck.exceptions import ComplexityCheckError
+from pwdcheck.exceptions import ComplexityCheckError, PolicyError
 
 
 def test_zero_uppercase(zero_umin_policy):
@@ -28,16 +28,17 @@ def test_zero_uppercase(zero_umin_policy):
     assert res_dct.uppercase == expected
 
 
-def test_false_uppercase(false_umin_policy):
-    # "umin": false
-    res_dct = Complexity("foobar", false_umin_policy).as_dict
-    assert res_dct.uppercase == {}
-
-
 def test_none_umin(none_umin_policy):
     # no "umin" in policy
     res_dct = Complexity("foobar", none_umin_policy).as_dict
     assert Complexity._pname_policy_map["umin"] not in res_dct.keys()
+
+
+def test_nonint_umin(nonint_umin_policy):
+    # non-int type: "umin"
+    with pytest.raises(PolicyError) as exc_info:
+        Complexity("foobar", nonint_umin_policy).as_dict
+    assert "non-int value set to" in str(exc_info.value)
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

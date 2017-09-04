@@ -10,7 +10,7 @@ Tests for "special" output param.
 import pytest
 
 from pwdcheck.cxty import Complexity
-from pwdcheck.exceptions import ComplexityCheckError
+from pwdcheck.exceptions import ComplexityCheckError, PolicyError
 
 
 def test_zero_special(zero_omin_policy):
@@ -28,16 +28,17 @@ def test_zero_special(zero_omin_policy):
     assert res_dct.special == expected
 
 
-def test_false_special(false_omin_policy):
-    # "omin": false
-    res_dct = Complexity("foobar", false_omin_policy).as_dict
-    assert res_dct.special == {}
-
-
 def test_none_special(none_omin_policy):
     # no "omin" in policy
     res_dct = Complexity("foobar", none_omin_policy).as_dict
     assert Complexity._pname_policy_map["omin"] not in res_dct.keys()
+
+
+def test_nonint_omin(nonint_omin_policy):
+    # non-int type: "omin"
+    with pytest.raises(PolicyError) as exc_info:
+        Complexity("foobar", nonint_omin_policy).as_dict
+    assert "non-int value set to" in str(exc_info.value)
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

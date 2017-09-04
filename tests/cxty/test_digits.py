@@ -10,7 +10,7 @@ Tests for "digits" output param.
 import pytest
 
 from pwdcheck.cxty import Complexity
-from pwdcheck.exceptions import ComplexityCheckError
+from pwdcheck.exceptions import ComplexityCheckError, PolicyError
 
 
 def test_zero_dmin(zero_dmin_policy):
@@ -28,16 +28,17 @@ def test_zero_dmin(zero_dmin_policy):
     assert res_dct.digits == expected
 
 
-def test_false_dmin(false_dmin_policy):
-    # "dmin": false
-    res_dct = Complexity("foobar", false_dmin_policy).as_dict
-    assert res_dct.digits == {}
-
-
 def test_none_dmin(none_dmin_policy):
     # no "dmin" in policy
     res_dct = Complexity("foobar", none_dmin_policy).as_dict
     assert Complexity._pname_policy_map["dmin"] not in res_dct.keys()
+
+
+def test_nonint_dmin(nonint_dmin_policy):
+    # non-int type: "dmin"
+    with pytest.raises(PolicyError) as exc_info:
+        Complexity("foobar", nonint_dmin_policy).as_dict
+    assert "non-int value set to" in str(exc_info.value)
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):
