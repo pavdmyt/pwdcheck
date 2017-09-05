@@ -19,21 +19,21 @@ from pwdcheck.extras import Extras
 def test_false_in_dictionary(false_in_dictionary_policy):
     # "in_dictionary": false
     res_dct = Extras("foobar", false_in_dictionary_policy).as_dict
-    assert "in_dictionary" not in res_dct.keys()
+    assert "dictionary" not in res_dct.keys()
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):
     # "in_dictionary": true
     res_dct = Extras("foobar", mixed_policy).as_dict   # not a in_dictionary
-    assert not res_dct.in_dictionary.err               # no :err
-    assert res_dct.in_dictionary.err_msg == ""         # empty :err_msg
+    assert not res_dct.dictionary.err               # no :err
+    assert res_dct.dictionary.err_msg == ""         # empty :err_msg
 
 
 def test_none_exc_if_no_err(mixed_policy):
     # "in_dictionary": true
     res_dct = Extras("foobar", mixed_policy).as_dict   # not a in_dictionary
-    assert not res_dct.in_dictionary.err               # no :err
-    assert res_dct.in_dictionary.exc is None           # :exc is None
+    assert not res_dct.dictionary.err               # no :err
+    assert res_dct.dictionary.exc is None           # :exc is None
 
 
 @pytest.mark.parametrize("pwd, pwd_dict, policy_dict, expected", [
@@ -90,10 +90,10 @@ def test_in_dictionary(pwd, pwd_dict, policy_dict, expected, mixed_policy):
     res_dct = Extras(pwd, mixed_policy, pwd_dict=pwd_dict).as_dict
 
     for key, val in expected.items():
-        if key == 'exc' and res_dct.in_dictionary['exc']:
-            assert isinstance(res_dct.in_dictionary[key], ExtrasCheckError)
+        if key == 'exc' and res_dct.dictionary['exc']:
+            assert isinstance(res_dct.dictionary[key], ExtrasCheckError)
         else:
-            assert res_dct.in_dictionary[key] == val
+            assert res_dct.dictionary[key] == val
 
 
 #

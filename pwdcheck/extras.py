@@ -60,10 +60,11 @@ class Extras(object):
                     "unknown policy parameter '{0}'".format(check_name)
                 )
 
-            # TODO: keys should not be policy_param_name's
+            # TODO: allow only bool values
             if self.policy[check_name]:
                 func = self.func_map.get(check_name)
-                dct[check_name] = self.make_resp_dict(func, check_name)
+                out_name = self._pname_policy_map[check_name]
+                dct[out_name] = self.make_resp_dict(func, check_name)
 
         return dct
 

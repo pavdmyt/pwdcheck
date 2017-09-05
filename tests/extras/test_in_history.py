@@ -19,21 +19,21 @@ from pwdcheck.extras import Extras
 def test_false_in_history(false_in_history_policy):
     # "in_history": false
     res_dct = Extras("foobar", false_in_history_policy).as_dict
-    assert "in_history" not in res_dct.keys()
+    assert "history" not in res_dct.keys()
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):
     # "in_history": true
     res_dct = Extras("foobar", mixed_policy).as_dict  # not a in_history
-    assert not res_dct.in_history.err                 # no :err
-    assert res_dct.in_history.err_msg == ""           # empty :err_msg
+    assert not res_dct.history.err                 # no :err
+    assert res_dct.history.err_msg == ""           # empty :err_msg
 
 
 def test_none_exc_if_no_err(mixed_policy):
     # "in_history": true
     res_dct = Extras("foobar", mixed_policy).as_dict  # not a in_history
-    assert not res_dct.in_history.err                 # no :err
-    assert res_dct.in_history.exc is None             # :exc is None
+    assert not res_dct.history.err                 # no :err
+    assert res_dct.history.exc is None             # :exc is None
 
 
 @pytest.mark.parametrize("pwd, pwd_blist, policy_blist, expected", [
@@ -90,10 +90,10 @@ def test_in_history(pwd, pwd_blist, policy_blist, expected, mixed_policy):
     res_dct = Extras(pwd, mixed_policy, pwd_history=pwd_blist).as_dict
 
     for key, val in expected.items():
-        if key == 'exc' and res_dct.in_history['exc']:
-            assert isinstance(res_dct.in_history[key], ExtrasCheckError)
+        if key == 'exc' and res_dct.history['exc']:
+            assert isinstance(res_dct.history[key], ExtrasCheckError)
         else:
-            assert res_dct.in_history[key] == val
+            assert res_dct.history[key] == val
 
 
 #

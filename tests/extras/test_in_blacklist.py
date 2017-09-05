@@ -19,21 +19,21 @@ from pwdcheck.extras import Extras
 def test_false_in_blacklist(false_in_blacklist_policy):
     # "in_blacklist": false
     res_dct = Extras("foobar", false_in_blacklist_policy).as_dict
-    assert "in_blacklist" not in res_dct.keys()
+    assert "blacklist" not in res_dct.keys()
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):
     # "in_blacklist": true
     res_dct = Extras("foobar", mixed_policy).as_dict  # not a in_blacklist
-    assert not res_dct.in_blacklist.err               # no :err
-    assert res_dct.in_blacklist.err_msg == ""         # empty :err_msg
+    assert not res_dct.blacklist.err               # no :err
+    assert res_dct.blacklist.err_msg == ""         # empty :err_msg
 
 
 def test_none_exc_if_no_err(mixed_policy):
     # "in_blacklist": true
     res_dct = Extras("foobar", mixed_policy).as_dict  # not a in_blacklist
-    assert not res_dct.in_blacklist.err               # no :err
-    assert res_dct.in_blacklist.exc is None           # :exc is None
+    assert not res_dct.blacklist.err               # no :err
+    assert res_dct.blacklist.exc is None           # :exc is None
 
 
 @pytest.mark.parametrize("pwd, pwd_blist, policy_blist, expected", [
@@ -90,10 +90,10 @@ def test_in_blacklist(pwd, pwd_blist, policy_blist, expected, mixed_policy):
     res_dct = Extras(pwd, mixed_policy, pwd_blacklist=pwd_blist).as_dict
 
     for key, val in expected.items():
-        if key == 'exc' and res_dct.in_blacklist['exc']:
-            assert isinstance(res_dct.in_blacklist[key], ExtrasCheckError)
+        if key == 'exc' and res_dct.blacklist['exc']:
+            assert isinstance(res_dct.blacklist[key], ExtrasCheckError)
         else:
-            assert res_dct.in_blacklist[key] == val
+            assert res_dct.blacklist[key] == val
 
 
 #

@@ -39,14 +39,14 @@ from pwdcheck.pwdcheck import _pwd_ok_check
     # extras errors
     #
 
-    # extras.in_blacklist error
-    ("extras", "in_blacklist", False),
+    # extras.blacklist error
+    ("extras", "blacklist", False),
 
-    # extras.in_dictionary error
-    ("extras", "in_dictionary", False),
+    # extras.dictionary error
+    ("extras", "dictionary", False),
 
-    # extras.in_history error
-    ("extras", "in_history", False),
+    # extras.history error
+    ("extras", "history", False),
 
     # extras.palindrome error
     ("extras", "palindrome", False),
@@ -70,7 +70,7 @@ def test_pwd_ok(param_type, param_name, expected, pwd_ok_full_out):
     ("complexity", "digits", True),  # <- shouldn't be checked
 
     ("extras", "foobar", True),      # <- unsupported param
-    ("extras", "in_history", True),  # <- shouldn't be checked
+    ("extras", "history", True),     # <- shouldn't be checked
 ])
 def test_unsupported_policy_param(param_type, param_name, expected,
                                   pwd_ok_full_out):
