@@ -11,6 +11,21 @@ from copy import deepcopy
 import pytest
 
 
+@pytest.fixture(scope='module', params=[
+    "true-value",
+    "false-value",
+])
+def unknown_param_policy(request, base_policy):
+    p = deepcopy(base_policy)
+
+    if request.param == "true-value":
+        p["extras"]["foo-param"] = True
+    if request.param == "false-value":
+        p["extras"]["foo-param"] = False
+
+    return p
+
+
 # Non-bool policies
 def compose_nonbool(policy_param_name):
 
@@ -39,44 +54,16 @@ nonbool_in_dictionary_policy = compose_nonbool("in_dictionary")
 nonbool_in_history_policy = compose_nonbool("in_history")
 
 
-@pytest.fixture(scope='module')
-def false_palindrome_policy(base_policy):
-    p = deepcopy(base_policy)
-    p["extras"]["palindrome"] = False
-    return p
+def compose_false(policy_param_name):
+    @pytest.fixture(scope='module')
+    def false_policy(base_policy):
+        p = deepcopy(base_policy)
+        p["extras"][policy_param_name] = False
+        return p
+    return false_policy
 
 
-@pytest.fixture(scope='module')
-def false_in_blacklist_policy(base_policy):
-    p = deepcopy(base_policy)
-    p["extras"]["in_blacklist"] = False
-    return p
-
-
-@pytest.fixture(scope='module')
-def false_in_dictionary_policy(base_policy):
-    p = deepcopy(base_policy)
-    p["extras"]["in_dictionary"] = False
-    return p
-
-
-@pytest.fixture(scope='module')
-def false_in_history_policy(base_policy):
-    p = deepcopy(base_policy)
-    p["extras"]["in_history"] = False
-    return p
-
-
-@pytest.fixture(scope='module', params=[
-    "true-value",
-    "false-value",
-])
-def unknown_param_policy(request, base_policy):
-    p = deepcopy(base_policy)
-
-    if request.param == "true-value":
-        p["extras"]["foo-param"] = True
-    if request.param == "false-value":
-        p["extras"]["foo-param"] = False
-
-    return p
+false_palindrome_policy = compose_false("palindrome")
+false_in_blacklist_policy = compose_false("in_blacklist")
+false_in_dictionary_policy = compose_false("in_dictionary")
+false_in_history_policy = compose_false("in_history")
