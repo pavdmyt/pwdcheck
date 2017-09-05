@@ -9,7 +9,7 @@ Tests for `palindrome` check.
 
 import pytest
 
-from pwdcheck.exceptions import ExtrasCheckError
+from pwdcheck.exceptions import ExtrasCheckError, PolicyError
 from pwdcheck.extras import Extras
 
 
@@ -20,6 +20,13 @@ def test_false_palindrome(false_palindrome_policy):
     # "palindrome": false
     res_dct = Extras("foobar", false_palindrome_policy).as_dict
     assert "palindrome" not in res_dct.keys()
+
+
+def test_nonbool_palindrome(nonbool_palindrome_policy):
+    # non-bool type: "palindrome"
+    with pytest.raises(PolicyError) as exc_info:
+        Extras("foobar", nonbool_palindrome_policy).as_dict
+    assert "non-bool value set to" in str(exc_info.value)
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):

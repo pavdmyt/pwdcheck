@@ -9,7 +9,7 @@ Tests for `in_history` check.
 
 import pytest
 
-from pwdcheck.exceptions import DataTypeError, ExtrasCheckError
+from pwdcheck.exceptions import DataTypeError, ExtrasCheckError, PolicyError
 from pwdcheck.extras import Extras
 
 
@@ -22,11 +22,18 @@ def test_false_in_history(false_in_history_policy):
     assert "history" not in res_dct.keys()
 
 
+def test_nonbool_in_history(nonbool_in_history_policy):
+    # non-bool type: "in_history"
+    with pytest.raises(PolicyError) as exc_info:
+        Extras("foobar", nonbool_in_history_policy).as_dict
+    assert "non-bool value set to" in str(exc_info.value)
+
+
 def test_empty_err_msg_if_no_err(mixed_policy):
     # "in_history": true
     res_dct = Extras("foobar", mixed_policy).as_dict  # not a in_history
-    assert not res_dct.history.err                 # no :err
-    assert res_dct.history.err_msg == ""           # empty :err_msg
+    assert not res_dct.history.err                    # no :err
+    assert res_dct.history.err_msg == ""              # empty :err_msg
 
 
 def test_none_exc_if_no_err(mixed_policy):

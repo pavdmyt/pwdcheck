@@ -60,7 +60,21 @@ class Extras(object):
                     "unknown policy parameter '{0}'".format(check_name)
                 )
 
-            # TODO: allow only bool values
+            # Ensure :check_val is bool
+            check_val = self.policy[check_name]
+            # `bool` is a subclass of `int`
+            #
+            # >>> bool.mro()
+            # [bool, int, object]
+            is_bool = type(check_val) is bool
+
+            if not is_bool:
+                raise PolicyError(
+                    "{0}: non-bool value set to '{1}' parameter"
+                    .format(check_val, check_name)
+                )
+
+            # Process
             if self.policy[check_name]:
                 func = self.func_map.get(check_name)
                 out_name = self._pname_policy_map[check_name]

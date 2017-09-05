@@ -9,7 +9,7 @@ Tests for `in_dictionary` check.
 
 import pytest
 
-from pwdcheck.exceptions import DataTypeError, ExtrasCheckError
+from pwdcheck.exceptions import DataTypeError, ExtrasCheckError, PolicyError
 from pwdcheck.extras import Extras
 
 
@@ -20,6 +20,13 @@ def test_false_in_dictionary(false_in_dictionary_policy):
     # "in_dictionary": false
     res_dct = Extras("foobar", false_in_dictionary_policy).as_dict
     assert "dictionary" not in res_dct.keys()
+
+
+def test_nonbool_in_dictionary(nonbool_in_dictionary_policy):
+    # non-bool type: "in_dictionary"
+    with pytest.raises(PolicyError) as exc_info:
+        Extras("foobar", nonbool_in_dictionary_policy).as_dict
+    assert "non-bool value set to" in str(exc_info.value)
 
 
 def test_empty_err_msg_if_no_err(mixed_policy):
